@@ -75,7 +75,7 @@ def drawGameState(screen, gs):
 
 # Função que trata do movimento das peças
 def moverpeca():
-    2
+    
 
 
 def main():
