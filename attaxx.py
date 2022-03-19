@@ -75,7 +75,7 @@ def drawGameState(screen, gs):
 
 # Função que trata do movimento das peças
 def moverpeca():
-    
+    2
 
 
 def main():
@@ -92,7 +92,7 @@ def main():
     running = True
 
     # Variáveis usadas para o evento de clickar no tabuleiro
-    qdselecionado = ()
+    qdselecionado = ()  
     qdsclickados = []
     primeiroclick = ()
     segundoclick = ()
@@ -112,6 +112,13 @@ def main():
                 col = click[0] // SQ_SIZE
                 row = click[1] // SQ_SIZE
 
+                # Dá reset aos cliques se carregar no mesmo quadrado duas vezes
+                if qdselecionado == (row, col):
+                    qdselecionado = ()
+                    qdsclickados = []
+                else:
+                    qdselecionado = (row, col)
+
                 # Verifica se é o primeiro clique ou o segundo
                 if qdselecionado is None and gs.board[qdselecionado(1)][qdselecionado(2)]:
                     primeiroclick = qdselecionado
@@ -122,14 +129,7 @@ def main():
 
                 elif primeiroclick is not None and gs.board[qdselecionado(1)][qdselecionado(2)] is None:
                     moverpeca()
-
-                # Dá reset aos cliques se carregar no mesmo quadrado duas vezes
-                if qdselecionado == (row, col):
-                    qdselecionado = ()
-                    qdsclickados = []
-                else:
-                    qdselecionado = (row, col)
-
+                    
                 # Diz que o quadrado que selecionei foi (X,Y) (vai de 1 a 8)
                 qdselecionado = (row, col)
 
