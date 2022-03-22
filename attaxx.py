@@ -21,23 +21,23 @@ class GameState():
 
         self.historico = []
 
+
 class Ataxx:
 
     def __init__(self):
         self.jogador = True                  # True = Jogador Azul  / False = Jogador Vermelho
 
     def mudar_turno(self):
-        self.jogador = not self.jogador    #de cada vez que esta função é executada, o jogo muda de turno.
+        # de cada vez que esta função é executada, o jogo muda de turno.
+        self.jogador = not self.jogador
 
     def get_all_possible_moves(self):
-        pos_copy = [(-1,1),(0,1),(1,1),(-1,0),(1,0),(-1,-1),(0,-1),(1,-1)]
-        pos_jump = [(-2,2),(-2,1),(-2,0),(-2,-1),(-2,-2),(-1,2),(-1,-2),
-		(0,2),(0,-2),(1,2),(1,-2),(2,2),(2,1),(2,0),(2,-1),(2,-2)]
-
-
+        pos_copy = [(-1, 1), (0, 1), (1, 1), (-1, 0),
+                     (1, 0), (-1, -1), (0, -1), (1, -1)]
+        pos_jump = [(-2, 2), (-2, 1), (-2, 0), (-2, -1), (-2, -2), (-1, 2), (-1, -2),
+		(0, 2), (0, -2), (1, 2), (1, -2), (2, 2), (2, 1), (2, 0), (2, -1), (2, -2)]
 
     ##########################################################################################
-
 
 
 p.init()  # Inicio um tabuleiro e defino o tamanho da janela, quantidade de quadrados, FPS
@@ -99,60 +99,56 @@ def main():
     clock = p.time.Clock()  # Faz o jogo correr no tempo
     screen.fill(p.Color("black"))  # Fundo da janela preto
     gs = GameState()  # Carrega o estado do jogo para uma variável
-    print(gs.board)  # DEBUG: Dá print na consola do estado do jogo (TIRAR NO FIM)
+#    print(gs.board)  # DEBUG: Dá print na consola do estado do jogo (TIRAR NO FIM)
     loadImages()  # Carrega as imagens
+
     # Executa a função de desenhar o tabuleiro no janela
     drawGameState(screen, gs)
 
     # O jogo funcionará até ser comandado o contrário (ex. sair do jogo)
     running = True
 
+            # A taxa de atualização será de 15 frames per second
+    clock.tick(MAX_FPS)
+    p.display.flip()
+
     # Variáveis usadas para o evento de clickar no tabuleiro
-    qdselecionado = ()  
+    qdselecionado = ()
     primeiroclick = ()
-    segundoclick = ()
 
     while running:
 
-        # Desliga o jogo quando se carrega no X
         for e in p.event.get():
             if e.type == p.QUIT:
+                p.quit()
                 running = False
-
+                
         # Guarda a localização do rato quando se carrega , formato click[x,y]
             elif e.type == p.MOUSEBUTTONDOWN:
                 click = p.mouse.get_pos()
 
-                # Transforma as coordenadas (números grandes e burros) para algo o quadrado que selecionei
+            # Transforma as coordenadas para o quadrado em específico
                 col = click[0] // SQ_SIZE
                 row = click[1] // SQ_SIZE
                 qdselecionado = (row, col)
-
-                # Dá reset aos cliques se carregar no mesmo quadrado duas vezes
-                if qdselecionado == (click[1], click[0]):
-                    qdselecionado = ()
-                else:
-                    qdselecionado = (row, col)
-
-                # Verifica se é o primeiro clique ou o segundo
-                if qdselecionado is None and gs.board[qdselecionado(1)][qdselecionado(2)]:
+                
+            # Verifica se é o primeiro clique ou o segundo
+                if primeiroclick == ():
                     primeiroclick = qdselecionado
-                else:
-                    segundoclick = primeiroclick
+                    qdselecionado = ()
 
-                # Já há uma peça no quadrado que clicamos aseguir, não há movimento e damos reset aos cliques
-                if segundoclick is not None and gs.board[qdselecionado(1)][qdselecionado(2)] is not None:
-                    primeiroclick = None
-                    segundoclick = None
+            # At this point, temos de ver se carregamos num quadrado com uma peça 
 
-                # Caso o segundo clique seja num quadrado vazio, será enviado para a função moverpeca() os cliques para fazer o movimento
-                elif segundoclick is not None and gs.board[qdselecionado(1)][qdselecionado(2)] is None:
-                    moverpeca(primeiroclick,segundoclick)
-                    
+                #I'll work on this later ffs   
 
-        # A taxa de atualização será de 15 frames per second
-        clock.tick(MAX_FPS)
-        p.display.flip()
+            # Dá reset aos cliques se carregar no mesmo quadrado duas vezes
+                if primeiroclick == qdselecionado:
+                    primeiroclick = ()
+                    qdselecionado = ()
+                    print("Carregado 2 vezes no mesmo, cliques resetados")
+            
+            # Caso tenhamos uma peça selecionada e haja uma peça no quadrado que clicamos aseguir, não há movimento e damos reset aos cliques
 
+            # Caso o segundo clique seja num quadrado vazio, será enviado para a função moverpeca() os cliques para fazer o movimento
 
 main()
