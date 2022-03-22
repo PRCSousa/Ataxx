@@ -109,7 +109,6 @@ def main():
 
     # Variáveis usadas para o evento de clickar no tabuleiro
     qdselecionado = ()  
-    qdsclickados = []
     primeiroclick = ()
     segundoclick = ()
 
@@ -127,27 +126,29 @@ def main():
                 # Transforma as coordenadas (números grandes e burros) para algo o quadrado que selecionei
                 col = click[0] // SQ_SIZE
                 row = click[1] // SQ_SIZE
+                qdselecionado = (row, col)
 
                 # Dá reset aos cliques se carregar no mesmo quadrado duas vezes
-                if qdselecionado == (row, col):
+                if qdselecionado == (click[1], click[0]):
                     qdselecionado = ()
-                    qdsclickados = []
                 else:
                     qdselecionado = (row, col)
 
                 # Verifica se é o primeiro clique ou o segundo
                 if qdselecionado is None and gs.board[qdselecionado(1)][qdselecionado(2)]:
                     primeiroclick = qdselecionado
+                else:
+                    segundoclick = primeiroclick
 
                 # Já há uma peça no quadrado que clicamos aseguir, não há movimento e damos reset aos cliques
-                elif primeiroclick is not None and gs.board[qdselecionado(1)][qdselecionado(2)] is not None:
+                if segundoclick is not None and gs.board[qdselecionado(1)][qdselecionado(2)] is not None:
                     primeiroclick = None
+                    segundoclick = None
 
-                elif primeiroclick is not None and gs.board[qdselecionado(1)][qdselecionado(2)] is None:
-                    moverpeca()
+                # Caso o segundo clique seja num quadrado vazio, será enviado para a função moverpeca() os cliques para fazer o movimento
+                elif segundoclick is not None and gs.board[qdselecionado(1)][qdselecionado(2)] is None:
+                    moverpeca(primeiroclick,segundoclick)
                     
-                # Diz que o quadrado que selecionei foi (X,Y) (vai de 1 a 8)
-                qdselecionado = (row, col)
 
         # A taxa de atualização será de 15 frames per second
         clock.tick(MAX_FPS)
