@@ -19,9 +19,25 @@ class GameState():
             ["2", "0", "0", "0", "0", "0", "1"],
         ]
 
-        self.jogador = True
-
         self.historico = []
+
+class Ataxx:
+
+    def __init__(self):
+        self.jogador = True                  # True = Jogador Azul  / False = Jogador Vermelho
+
+    def mudar_turno(self):
+        self.jogador = not self.jogador    #de cada vez que esta função é executada, o jogo muda de turno.
+
+    def get_all_possible_moves(self):
+        pos_copy = [(-1,1),(0,1),(1,1),(-1,0),(1,0),(-1,-1),(0,-1),(1,-1)]
+        pos_jump = [(-2,2),(-2,1),(-2,0),(-2,-1),(-2,-2),(-1,2),(-1,-2),
+		(0,2),(0,-2),(1,2),(1,-2),(2,2),(2,1),(2,0),(2,-1),(2,-2)]
+
+
+
+    ##########################################################################################
+
 
 
 p.init()  # Inicio um tabuleiro e defino o tamanho da janela, quantidade de quadrados, FPS
