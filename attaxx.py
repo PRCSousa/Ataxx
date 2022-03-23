@@ -1,3 +1,5 @@
+from chess import Board
+from matplotlib.pyplot import draw
 import pygame as p
 
 # Defino o estado do jogo quando começa
@@ -68,7 +70,13 @@ def drawBoard(screen, board):
                 c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))
             if board[r][c] == "3":
                 p.draw.rect(screen, p.Color("gray"), p.Rect(
-                    c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))
+                    c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))    
+
+
+def drawSelected(screen, sqrow, sqcol):
+            p.draw.rect(screen,p.Color("gray"), p.Rect(sqcol * SQ_SIZE, sqrow * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+            print("foda-se")
+
 
 # Colocar as peças no tabuleiro
 
@@ -87,6 +95,7 @@ def drawPieces(screen, board):
 def drawGameState(screen, gs):
     drawBoard(screen, gs.board)
     drawPieces(screen, gs.board)
+
 
 
 # Função que trata do movimento das peças
@@ -135,8 +144,11 @@ def main():
             # Verifica se é o primeiro clique ou o segundo
                 if primeiroclick == ():
                     primeiroclick = qdselecionado
-                    if gs.board[primeiroclick[0]][primeiroclick[1]] != ('0' or '3') :
-                        p.draw.rect
+                    if gs.board[primeiroclick[0]][primeiroclick[1]] != '0' :
+                        if gs.board[primeiroclick[0]][primeiroclick[1]] != '3' :
+                            sqrow = primeiroclick[0]
+                            sqcol = primeiroclick[1]
+                            drawSelected(screen, sqrow, sqcol)
                     qdselecionado = ()
 
             # At this point, temos de ver se carregamos num quadrado com uma peça
@@ -148,6 +160,10 @@ def main():
                     primeiroclick = ()
                     qdselecionado = ()
                     print("Carregado 2 vezes no mesmo, cliques resetados")
+
+                if primeiroclick != () and qdselecionado !=():
+                    primeiroclick = ()
+                    qdselecionado = ()
             
             # Caso tenhamos uma peça selecionada e haja uma peça no quadrado que clicamos aseguir, não há movimento e damos reset aos cliques
 
