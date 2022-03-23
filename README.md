@@ -1,4 +1,4 @@
-# Ataxx-Project
+# Ataxx,
 
 Attaxx is an abstract strategy board game and also a strategy video game that was published in
 arcades by The Leland Corporation in 1990 with the name Ataxx . It also appeared the same year as
