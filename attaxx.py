@@ -3,7 +3,7 @@ from matplotlib.pyplot import draw
 import pygame as p
 
 # Defino o estado do jogo quando começa
-# Notação: 0 - espaço vazio  1 - peça vermelha  2 - peça azul  3 - parede
+# Notação: 0 - espaço vazio  1 - peça vermelha  2 - peça azul  8 - parede
 # A variável jogador irá manter track de quem joga no momento, se for True, é o jogador, se for False, é o PC
 # O histórico manterá guardado as jogadas durante a partida.
 
@@ -14,9 +14,9 @@ class GameState():
         self.board = [
             ["1", "0", "0", "0", "0", "0", "2"],
             ["0", "0", "0", "0", "0", "0", "0"],
-            ["0", "0", "0", "3", "0", "0", "0"],
-            ["0", "0", "3", "0", "3", "0", "0"],
-            ["0", "0", "0", "3", "0", "0", "0"],
+            ["0", "0", "0", "8", "0", "0", "0"],
+            ["0", "0", "8", "0", "8", "0", "0"],
+            ["0", "0", "0", "8", "0", "0", "0"],
             ["0", "0", "0", "0", "0", "0", "0"],
             ["2", "0", "0", "0", "0", "0", "1"],
         ]
@@ -54,7 +54,7 @@ IMAGES = {}
 
 
 def loadImages():
-    pieces = ["1", "2"]
+    pieces = ["1", "2", "3"]
     for piece in pieces:
         IMAGES[piece] = p.transform.scale(p.image.load(
             "images/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
@@ -68,7 +68,7 @@ def drawBoard(screen, board):
             color = p.Color(66, 179, 132)
             p.draw.rect(screen, color, p.Rect(
                 c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))
-            if board[r][c] == "3":
+            if board[r][c] == "8":
                 p.draw.rect(screen, p.Color("gray"), p.Rect(
                     c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))    
 
@@ -85,7 +85,7 @@ def drawPieces(screen, board):
     for r in range(DIMENSION):
         for c in range(DIMENSION):
             piece = board[r][c]
-            if piece != "0" and piece != "3":
+            if piece != "0" and piece != "8":
                 screen.blit(IMAGES[piece], p.Rect(
                     c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
@@ -145,9 +145,10 @@ def main():
                 if primeiroclick == ():
                     primeiroclick = qdselecionado
                     if gs.board[primeiroclick[0]][primeiroclick[1]] != '0' :
-                        if gs.board[primeiroclick[0]][primeiroclick[1]] != '3' :
-                            sqrow = primeiroclick[0]
-                            sqcol = primeiroclick[1]
+                        if gs.board[primeiroclick[0]][primeiroclick[1]] != '8' :
+                            if gs.board[primeiroclick[0]][primeiroclick[1]] != '3' :
+                                sqrow = primeiroclick[0]
+                                sqcol = primeiroclick[1]
                             drawSelected(screen, sqrow, sqcol)
                     qdselecionado = ()
 
