@@ -129,15 +129,17 @@ def main():
 
             # Transforma as coordenadas para o quadrado em específico
                 col = click[0] // SQ_SIZE
-                row = click[1] // SQ_SIZE
+                row = click[1] // SQ_SIZE       
                 qdselecionado = (row, col)
                 
             # Verifica se é o primeiro clique ou o segundo
                 if primeiroclick == ():
                     primeiroclick = qdselecionado
+                    if gs.board[primeiroclick[0]][primeiroclick[1]] != ('0' or '3') :
+                        p.draw.rect
                     qdselecionado = ()
 
-            # At this point, temos de ver se carregamos num quadrado com uma peça 
+            # At this point, temos de ver se carregamos num quadrado com uma peça
 
                 #I'll work on this later ffs   
 
