@@ -25,18 +25,15 @@ class GameState():
         self.jogador = True                  # True = Jogador Azul  / False = Jogador Vermelho
 
         self.moves = [(-1, 1), (0, 1), (1, 1), (-1, 0),
-                      (1, 0), (-1, -1), (0, -1), (1, -1), 
-                      (-2, 2), (-2, 1), (-2, 0), (-2, -1), 
-                      (-2, -2), (-1, 2), (-1, -2),(0, 2), 
-                      (0, -2), (1, 2), (1, -2), (2, 2), 
+                      (1, 0), (-1, -1), (0, -1), (1, -1),
+                      (-2, 2), (-2, 1), (-2, 0), (-2, -1),
+                      (-2, -2), (-1, 2), (-1, -2),(0, 2),
+                      (0, -2), (1, 2), (1, -2), (2, 2),
                       (2, 1), (2, 0), (2, -1), (2, -2)]
 
     def mudar_turno(self):
         # de cada vez que esta função é executada, o jogo muda de turno.
         self.jogador = not self.jogador
-
-    
-
 
     ##########################################################################################
 
@@ -56,7 +53,6 @@ def loadImages():
         IMAGES[piece] = p.transform.scale(p.image.load(
             "images/" + piece + ".png"), (SQ_SIZE, SQ_SIZE))
 
-
 # Desenhar o actual tabuleiro na janela
 def drawBoard(screen, board):
     for r in range(DIMENSION):
@@ -66,7 +62,7 @@ def drawBoard(screen, board):
             c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))
             if board[r][c] == "8":
                  p.draw.rect(screen, p.Color("gray"), p.Rect(
-                     c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))    
+                     c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))
 
 # Colocar as peças no tabuleiro
 def drawPieces(screen, board):
@@ -78,32 +74,17 @@ def drawPieces(screen, board):
                     c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
 
 # Desenha uma marca na peça carregada
-# def drawSelected(screen, board, primeiroclick):
-#     i = int(primeiroclick[0])
-#     j = int(primeiroclick[1])
-#     if board[j][i] == '8':
-#         return None
-#     elif board[j][i] == '1' or board[j][i] == '2':
-#             p.draw.rect(screen, p.Color(0,0,0), (j * SQ_SIZE, i * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))
-#             drawPieces(screen, board)  
-
-def mostrarmovimentos(screen, board, moves, primeiroclick):
-    for r in range(DIMENSION):
-        for c in range(DIMENSION):
-            for move in range(len(moves)):
-                relativo = ()
-                relativo[0] = primeiroclick[0]-move[0]
-                relativo[1] = primeiroclick[1]-move[1]
-                if board[relativo[0]][relativo[1]] == '0':
-                    screen.blit(IMAGES[3], p.Rect(
-                    c * SQ_SIZE, r * SQ_SIZE, SQ_SIZE, SQ_SIZE))
-
+def drawSelected(screen, board, primeiroclick):
+     i = int(primeiroclick[0])
+     j = int(primeiroclick[1])
+     print(i , j)
+     if board[j][i] == '1' or board[j][i] == '2':
+             p.draw.rect(screen, p.Color(255,255,255), (j * SQ_SIZE, i * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))
 
 # Desenhar o estado do tabuleiro ditado pelo ataxxengine.py
 def drawGameState(screen, gs):
     drawBoard(screen, gs.board)
     drawPieces(screen, gs.board)
-
 
 def main():
     screen = p.display.set_mode((WIDTH, HEIGHT))  # Define o tamanho da janela
@@ -119,40 +100,42 @@ def main():
     # O jogo funcionará até ser comandado o contrário (ex. sair do jogo)
     running = True
 
-            # A taxa de atualização será de 15 frames per second
+    # A taxa de atualização será de 15 frames per second
     clock.tick(MAX_FPS)
     p.display.flip()
 
     # Variáveis usadas para o evento de clickar no tabuleiro
     qdselecionado = ()
     primeiroclick = ()
+
     while running:
 
         for e in p.event.get():
             if e.type == p.QUIT:
                 p.quit()
                 running = False
-                
-        # Guarda a localização do rato quando se carrega , formato click[x,y]
+
+            # Guarda a localização do rato quando se carrega , formato click[x,y]
             elif e.type == p.MOUSEBUTTONDOWN:
                 click = p.mouse.get_pos()
 
             # Transforma as coordenadas para o quadrado em específico
-                col = click[0] // SQ_SIZE
-                row = click[1] // SQ_SIZE       
+                col = click[1] // SQ_SIZE
+                row = click[0] // SQ_SIZE
                 qdselecionado = (row, col)
-                
+
             # Verifica se é o primeiro clique ou o segundo
                 if primeiroclick == ():
                     primeiroclick = qdselecionado
-                            # drawSelected(screen,gs.board,primeiroclick)
                     qdselecionado = ()
 
             # At this point, temos de ver se carregamos num quadrado com uma peça
                 if gs.board[primeiroclick[0]][primeiroclick[1]] != '0' and gs.board[primeiroclick[0]][primeiroclick[1]] !='3' and gs.board[primeiroclick[0]][primeiroclick[1]] != '8' :
-                    mostrarmovimentos(screen, gs.board, gs.moves, primeiroclick)
+                    drawBoard(screen,gs.board)
+                    drawSelected(screen,gs.board,primeiroclick)
+                    drawPieces(screen,gs.board)
 
-                #I'll work on this later ffs   
+                #I'll work on this later ffs
 
             # Dá reset aos cliques se carregar no mesmo quadrado duas vezes
                 if primeiroclick == qdselecionado:
@@ -163,9 +146,5 @@ def main():
                 if primeiroclick != () and qdselecionado !=():
                     primeiroclick = ()
                     qdselecionado = ()
-            
-            # Caso tenhamos uma peça selecionada e haja uma peça no quadrado que clicamos aseguir, não há movimento e damos reset aos cliques
-
-            # Caso o segundo clique seja num quadrado vazio, será enviado para a função moverpeca() os cliques para fazer o movimento
 
 main()
