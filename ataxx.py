@@ -77,6 +77,7 @@ def tipo_jogo():
     return tipo
 
 def jogada_Humano(jog):
+    
 
 
 def jogada(n, jog, tJog):
@@ -90,6 +91,7 @@ def jogada(n, jog, tJog):
             jogada_Humano(jog)
         else:
             jogada_PC(jog,n)
+
 
 def main():
     nMovs = 0
