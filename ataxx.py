@@ -50,26 +50,17 @@ def outroJog(jog):
 
 
 def assinala_quad(x, y, atip,screen):
-    print("foda-se")
-    col = (192,192,192)
     if atip == 1:
-        col = (173,255,47)
         pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+3,x*sq+3,6,6))
         pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+sq-9,x*sq+3,6,6))
         pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+3,x*sq+sq-9,6,6))
         pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+sq-9,x*sq+sq-9,6,6))
 
     elif atip == 2:
-        col = (199,21,133)
-        pygame.draw.ellipse(screen,(220, 20, 60),(x+4,y+5,10, 10))
-        pygame.draw.ellipse(screen,(220, 20, 60),(x*sq+5,y*sq+5,4,4))
-        pygame.draw.ellipse(screen,(220, 20, 60),(x*sq+5,y*sq+5,4,4))
-        pygame.draw.ellipse(screen,(220, 20, 60),(x*sq+5,y*sq+5,4,4))
-
-    
-
-        # Aqui é suposto desenhar os quadrados de movimento
-
+        pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+3,x*sq+3,6,6))
+        pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+sq-9,x*sq+3,6,6))
+        pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+3,x*sq+sq-9,6,6))
+        pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+sq-9,x*sq+sq-9,6,6))
 
 def mostra_tabul(screen, tabul):
     for r in range(N):
@@ -147,3 +138,19 @@ def main():
 
 
 main()
+
+'''
+Dev Notes:
+
+25/03
+A seleção das peças já está a funcionar, se achares estranho o facto de
+carregares nas peças azuis e selecionarem em vermelho, dw porque isso resolve-se
+quando a função jogada_PC for feita (I hope)
+
+Tenho de ter em atenção em como vou dar handle aos cliques do rato, posso fazer
+encadeamento de funções ATÉ ter de dar input a mais um mouse click, a função
+que recebe esse mouse click tem de ser feita dentro do if do evento do
+MOUSEBUTTONDOWN
+
+
+'''
