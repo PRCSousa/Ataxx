@@ -82,28 +82,31 @@ def mostra_tabul(screen, tabul):
 def comer():
     dx = -1
     dy = -1
-    print("teste")
     for dx in range(dx, 2):
         for dy in range(dy, 2):
-            print("teste loop")
-            # if tabul[movimento.yf + dy][movimento.xf + dx] == outroJog(movimento.jog):
-            #     tabul[movimento.yf + dy][movimento.xf + dx] == movimento.jog
-    print(tabul[0][1])        
-    print(tabul[0][2])   #tabul[y][x]
-    print(tabul[0][3])        
-    print(tabul[1][1])
-    print(tabul[1][2])   #aqui está a nossa peça
-    print(tabul[1][3])   #aqui está o inimigo
-    print(tabul[2][1])
-    print(tabul[2][2])
-    print(tabul[2][3])   #aqui está parede
-
-    #WTF is going on here
+            print("DY, DX ",dy, dx)
+            try:
+                if movimento.yf + dy == -1 and movimento.xf + dx == -1:
+                    if tabul[0][0] == outroJog(movimento.jog):
+                        tabul[movimento.yf + dy+1][movimento.xf + dx+1] = movimento.jog 
+                elif movimento.yf + dy == -1:
+                    if tabul[0][movimento.xf + dx] == outroJog(movimento.jog):
+                        tabul[movimento.yf + dy+1][movimento.xf + dx] = movimento.jog
+                elif movimento.xf + dx == -1:
+                    if tabul[movimento.yf + dy][0] == outroJog(movimento.jog):
+                        tabul[movimento.yf + dy][movimento.xf + dx+1] = movimento.jog
+                       
+                elif tabul[movimento.yf + dy][movimento.xf + dx] == outroJog(movimento.jog):
+                    tabul[movimento.yf + dy][movimento.xf + dx] = movimento.jog
+            except IndexError:
+                pass
+        dy=-1
 
 def executa_movimento():
     tabul[movimento.yf][movimento.xf] = movimento.jog
     if movimento.tipo == 1:
         tabul[movimento.yi][movimento.xi] = 0
+    print("jogador a jogar: ", movimento.jog)
     comer()        
 
 def adjacente(dist):
