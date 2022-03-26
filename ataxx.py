@@ -1,6 +1,4 @@
-<<<<<<< HEAD
 import random
-from turtle import Screen
 import numpy
 import math
 import pygame
