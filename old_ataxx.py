@@ -77,8 +77,8 @@ def drawSelected(screen, board, primeiroclick):
     j = int(primeiroclick[1])
     print(i , j)
     if board[j][i] == '1' or board[j][i] == '2':
-        # screen.blit(IMAGES['3'], p.Rect(j * SQ_SIZE, i * SQ_SIZE, SQ_SIZE, SQ_SIZE))
-        # p.draw.rect(screen, p.Color(255,255,255), (j * SQ_SIZE, i * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))
+        screen.blit(IMAGES['3'], p.Rect(j * SQ_SIZE, i * SQ_SIZE, SQ_SIZE, SQ_SIZE))
+        p.draw.rect(screen, p.Color(255,255,255), (j * SQ_SIZE, i * SQ_SIZE, SQ_SIZE - 2, SQ_SIZE - 2))
 
 # Desenhar o estado do tabuleiro ditado pelo ataxxengine.py
 def drawGameState(screen, gs):
