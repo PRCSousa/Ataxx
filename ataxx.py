@@ -1,3 +1,4 @@
+from asyncore import loop
 import random
 import numpy
 import math
@@ -78,19 +79,32 @@ def mostra_tabul(screen, tabul):
                 pygame.draw.ellipse(screen, (106, 90, 205), pygame.Rect(
                     c * sq + (sq / 4), r * sq + (sq / 4), sq / 2, sq / 2))
 
-def multiplica():
+def comer():
     dx = -1
     dy = -1
-    for dx in range(dx, 1):
-        for dy in range(dy, 1):
-            if tabul[movimento.yf + dy][movimento.xf + dx] == outroJog(movimento.jog):
-                tabul[movimento.yf + dy][movimento.xf + dx] == movimento.jog
+    print("teste")
+    for dx in range(dx, 2):
+        for dy in range(dy, 2):
+            print("teste loop")
+            # if tabul[movimento.yf + dy][movimento.xf + dx] == outroJog(movimento.jog):
+            #     tabul[movimento.yf + dy][movimento.xf + dx] == movimento.jog
+    print(tabul[0][1])        
+    print(tabul[0][2])   #tabul[y][x]
+    print(tabul[0][3])        
+    print(tabul[1][1])
+    print(tabul[1][2])   #aqui está a nossa peça
+    print(tabul[1][3])   #aqui está o inimigo
+    print(tabul[2][1])
+    print(tabul[2][2])
+    print(tabul[2][3])   #aqui está parede
+
+    #WTF is going on here
 
 def executa_movimento():
     tabul[movimento.yf][movimento.xf] = movimento.jog
     if movimento.tipo == 1:
-        [movimento.yi][movimento.xi] = 0
-    multiplica()        
+        tabul[movimento.yi][movimento.xi] = 0
+    comer()        
 
 def adjacente(dist):
     return(
@@ -121,7 +135,6 @@ def tipo_jogo():
     return tipo
 
 def jogadas_validas_pos(jog, yi,xi,tipoAss,screen):
-    nmovs = 0
     if tabul[yi][xi] == jog:
         for k in range(N):
             for l in range(N):
@@ -132,46 +145,36 @@ def jogadas_validas_pos(jog, yi,xi,tipoAss,screen):
                 movimento.xf = l
                 if movimento_valido():
                     assinala_quad(k,l,tipoAss,screen)
+    print("jogadas_validas_pos")
 
 # def fim_jogo():
 
-def jogada_Humano(cl,jog, px, py,screen):
-    if cl == 0 and tabul[py][px]==jog:
+def jogada_Humano(cl, px, py,screen):
+    if cl == 0 and tabul[py][px]==movimento.jog:
         movimento.xi = px
         movimento.yi = py
         assinala_quad(py, px,1,screen)
-        jogadas_validas_pos(jog,py,px,1,screen)
+        jogadas_validas_pos(movimento.jog,py,px,1,screen)
+        print("jogada_Humano selecionou peça")
     elif cl == 1:
         movimento.xf = px
         movimento.yf = py
-        assinala_quad(movimento.xf,movimento.yf1,0,screen)
-        if movimento_valido():
-            executa_movimento()
-
-
-
-def outroCl(cl):
-    if cl == 0:
-        return 1
-    else:
-        return 0
+        assinala_quad(movimento.xf,movimento.yf,0,screen)
+        print("jogada_Humano selecionou movimento")
 
 def main():
     cl = 0
-    nMovs = 2
-    jog = 0
+    nMovs = 1
+    movimento.jog = 1
     tipo = int(tipo_jogo())
     screen = pygame.display.set_mode((SIZE, SIZE))
     clock = pygame.time.Clock()
     screen.fill((0, 0, 0))
     mostra_tabul(screen, tabul)
-    clock.tick(MAX_FPS)
+    clock.tick(60)
     pygame.display.flip()
     running = True
     while running:
-        nMovs += 1
-        jog = outroJog(jog)
-
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 pygame.quit()
@@ -185,24 +188,46 @@ def main():
                 if nMovs % 2 == 1:
                     if tipo <= 2:
                         if cl == 0:
-                            jogada_Humano(cl,jog, xi, yi,screen)
-                            outroCl(cl)
+                            jogada_Humano(cl, xi, yi,screen)
+                            cl = 1
+                            print("JOGADOR 1 ESCOLHEU PEÇA")
                         elif cl == 1:
-                            jogada_Humano(cl,jog, xi, yi,screen)
-                            outroCl(cl)
+                            jogada_Humano(cl, xi, yi,screen)
+                            cl = 0
+                            print("JOGADOR 1 ESCOLHEU MOVIMENTO")
+                            #print(movimento.yf)
+                            #print(movimento.xf)
+                            #if movimento_valido():
+                            if movimento_valido():
+                                executa_movimento()
+                                nMovs += 1
+                                movimento.jog = outroJog(movimento.jog)
+                            mostra_tabul(screen, tabul)
                         
                     # else:
                     #     jogada_PC(jog, nMovs)
                 else:
                     if tipo == 1 or tipo == 3:
                         if cl == 0:
-                            jogada_Humano(cl,jog, xi, yi,screen)
-                            outroCl(cl)
+                            jogada_Humano(cl, xi, yi,screen)
+                            cl = 1
+                            print("JOGADOR 2 ESCOLHEU PEÇA")
                         elif cl == 1:
-                            jogada_Humano(cl,jog, xi, yi,screen)
-                            outroCl(cl)
+                            jogada_Humano(cl, xi, yi,screen)
+                            cl = 0
+                            print("JOGADOR 2 ESCOLHEU MOVIMENTO")
+                            #print(movimento.yf)
+                            #print(movimento.xf)
+                            if movimento_valido():
+                                executa_movimento()
+                                nMovs += 1
+                                movimento.jog = outroJog(movimento.jog)
+                            mostra_tabul(screen, tabul)
+
                     # else:
-                    #     jogada_PC(jog, nMovs)          
+                    #     jogada_PC(jog, nMovs)        
+                    # ...
+                    #   
         pygame.display.flip()
 
 
