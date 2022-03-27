@@ -26,8 +26,8 @@ class movimento:
     xi = 0
     yi = 0
     yf = 0
-    jog = 0
     xf = 0
+    jog = 0
     tipo = 0
 
 
@@ -50,14 +50,14 @@ def outroJog(jog):
         return 1
 
 
-def assinala_quad(x, y, atip,screen):
-    if atip == 1:
+def assinala_quad(x, y,screen):
+    if movimento.jog == 1:
         pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+3,x*sq+3,6,6))
         pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+sq-11,x*sq+3,6,6))
         pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+3,x*sq+sq-11,6,6))
         pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+sq-11,x*sq+sq-11,6,6))
 
-    elif atip == 2:
+    else:
         pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+3,x*sq+3,6,6))
         pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+sq-11,x*sq+3,6,6))
         pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+3,x*sq+sq-11,6,6))
@@ -84,7 +84,6 @@ def comer():
     dy = -1
     for dx in range(dx, 2):
         for dy in range(dy, 2):
-            print("DY, DX ",dy, dx)
             try:
                 if movimento.yf + dy == -1 and movimento.xf + dx == -1:
                     if tabul[0][0] == outroJog(movimento.jog):
@@ -106,7 +105,6 @@ def executa_movimento():
     tabul[movimento.yf][movimento.xf] = movimento.jog
     if movimento.tipo == 1:
         tabul[movimento.yi][movimento.xi] = 0
-    print("jogador a jogar: ", movimento.jog)
     comer()        
 
 def adjacente(dist):
@@ -147,23 +145,35 @@ def jogadas_validas_pos(jog, yi,xi,tipoAss,screen):
                 movimento.yf = k
                 movimento.xf = l
                 if movimento_valido():
-                    assinala_quad(k,l,tipoAss,screen)
-    print("jogadas_validas_pos")
+                    assinala_quad(k,l,screen)
 
-# def fim_jogo():
+def jogadas_validas():
+    k = -1
+    j = -1
+    for i in range(N):
+        for j in range(N):
+            if tabul[i][j] == jog:
+                for k in range(k, 2):
+                    for j in range(j, 2):
+
+
+def fim_jogo():
+    if (jogadas_validas(outroJog(movimento.jog),0) > 0): return -1
+    if (avalia(movimento.jog) > 0): return movimento.jog
+    elif (avalia(movimento.jog)<=0): return outroJog(movimento.jog)
+    else:
+        return 0
 
 def jogada_Humano(cl, px, py,screen):
     if cl == 0 and tabul[py][px]==movimento.jog:
         movimento.xi = px
         movimento.yi = py
-        assinala_quad(py, px,1,screen)
+        assinala_quad(py, px,screen)
         jogadas_validas_pos(movimento.jog,py,px,1,screen)
-        print("jogada_Humano selecionou peça")
     elif cl == 1:
         movimento.xf = px
         movimento.yf = py
-        assinala_quad(movimento.xf,movimento.yf,0,screen)
-        print("jogada_Humano selecionou movimento")
+        assinala_quad(movimento.xf,movimento.yf,screen)
 
 def main():
     cl = 0
@@ -198,9 +208,6 @@ def main():
                             jogada_Humano(cl, xi, yi,screen)
                             cl = 0
                             print("JOGADOR 1 ESCOLHEU MOVIMENTO")
-                            #print(movimento.yf)
-                            #print(movimento.xf)
-                            #if movimento_valido():
                             if movimento_valido():
                                 executa_movimento()
                                 nMovs += 1
@@ -209,6 +216,8 @@ def main():
                         
                     # else:
                     #     jogada_PC(jog, nMovs)
+
+
                 else:
                     if tipo == 1 or tipo == 3:
                         if cl == 0:
@@ -219,8 +228,6 @@ def main():
                             jogada_Humano(cl, xi, yi,screen)
                             cl = 0
                             print("JOGADOR 2 ESCOLHEU MOVIMENTO")
-                            #print(movimento.yf)
-                            #print(movimento.xf)
                             if movimento_valido():
                                 executa_movimento()
                                 nMovs += 1
@@ -231,7 +238,10 @@ def main():
                     #     jogada_PC(jog, nMovs)        
                     # ...
                     #   
+
+
         pygame.display.flip()
+        # fim = fim_jogo() 
 
 
 main()
