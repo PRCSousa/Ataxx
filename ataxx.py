@@ -1,9 +1,5 @@
 from asyncore import loop
-import random
-import numpy
-import math
 import pygame
-import copy
 
 pygame.init()
 SIZE = 600
@@ -12,15 +8,16 @@ N = 7
 sq = SIZE / N
 MAX_FPS = 15
 tabul = [
-            [1, 0, 0, 0, 0, 0, 2],
-            [0, 0, 0, 2, 0, 0, 0],
-            [0, 0, 0, 8, 0, 0, 0],
-            [0, 0, 8, 0, 8, 0, 0],
-            [0, 0, 0, 8, 0, 0, 0],
-            [0, 0, 0, 1, 0, 0, 0],
-            [2, 0, 0, 0, 0, 0, 1],
-        ]
+    [1, 0, 0, 0, 0, 0, 2],
+    [0, 0, 0, 2, 0, 0, 0],
+    [0, 0, 0, 8, 0, 0, 0],
+    [0, 0, 8, 0, 8, 0, 0],
+    [0, 0, 0, 8, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0],
+    [2, 0, 0, 0, 0, 0, 1],
+]
 tabcopia = []
+
 
 class movimento:
     xi = 0
@@ -50,18 +47,21 @@ def outroJog(jog):
         return 1
 
 
-def assinala_quad(x, y,screen):
+def assinala_quad(x, y, screen):
     if movimento.jog == 1:
-        pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+3,x*sq+3,6,6))
-        pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+sq-11,x*sq+3,6,6))
-        pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+3,x*sq+sq-11,6,6))
-        pygame.draw.ellipse(screen,(220, 20, 60),(y*sq+sq-11,x*sq+sq-11,6,6))
+        pygame.draw.ellipse(screen, (220, 20, 60), (y*sq+3, x*sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (220, 20, 60), (y*sq+sq-11, x*sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (220, 20, 60), (y*sq+3, x*sq+sq-11, 6, 6))
+        pygame.draw.ellipse(screen, (220, 20, 60),
+                            (y*sq+sq-11, x*sq+sq-11, 6, 6))
 
     else:
-        pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+3,x*sq+3,6,6))
-        pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+sq-11,x*sq+3,6,6))
-        pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+3,x*sq+sq-11,6,6))
-        pygame.draw.ellipse(screen,(106, 90, 205),(y*sq+sq-11,x*sq+sq-11,6,6))
+        pygame.draw.ellipse(screen, (106, 90, 205), (y*sq+3, x*sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (106, 90, 205), (y*sq+sq-11, x*sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (106, 90, 205), (y*sq+3, x*sq+sq-11, 6, 6))
+        pygame.draw.ellipse(screen, (106, 90, 205),
+                            (y*sq+sq-11, x*sq+sq-11, 6, 6))
+
 
 def mostra_tabul(screen, tabul):
     for r in range(N):
@@ -79,6 +79,11 @@ def mostra_tabul(screen, tabul):
                 pygame.draw.ellipse(screen, (106, 90, 205), pygame.Rect(
                     c * sq + (sq / 4), r * sq + (sq / 4), sq / 2, sq / 2))
 
+
+def finaliza(tipo, fim):
+    print("Jogador ", movimento.jog, "ganha !")
+
+
 def comer():
     dx = -1
     dy = -1
@@ -87,34 +92,42 @@ def comer():
             try:
                 if movimento.yf + dy == -1 and movimento.xf + dx == -1:
                     if tabul[0][0] == outroJog(movimento.jog):
-                        tabul[movimento.yf + dy+1][movimento.xf + dx+1] = movimento.jog 
+                        tabul[movimento.yf + dy +
+                              1][movimento.xf + dx+1] = movimento.jog
                 elif movimento.yf + dy == -1:
                     if tabul[0][movimento.xf + dx] == outroJog(movimento.jog):
-                        tabul[movimento.yf + dy+1][movimento.xf + dx] = movimento.jog
+                        tabul[movimento.yf + dy +
+                              1][movimento.xf + dx] = movimento.jog
                 elif movimento.xf + dx == -1:
                     if tabul[movimento.yf + dy][0] == outroJog(movimento.jog):
-                        tabul[movimento.yf + dy][movimento.xf + dx+1] = movimento.jog
-                       
+                        tabul[movimento.yf + dy][movimento.xf +
+                                                 dx+1] = movimento.jog
+
                 elif tabul[movimento.yf + dy][movimento.xf + dx] == outroJog(movimento.jog):
                     tabul[movimento.yf + dy][movimento.xf + dx] = movimento.jog
             except IndexError:
                 pass
-        dy=-1
+        dy = -1
+
 
 def executa_movimento():
     tabul[movimento.yf][movimento.xf] = movimento.jog
     if movimento.tipo == 1:
         tabul[movimento.yi][movimento.xi] = 0
-    comer()        
+    comer()
+
 
 def adjacente(dist):
     return(
-        abs(movimento.xi - movimento.xf) == dist and abs(movimento.yi - movimento.yf) <=dist or
-        abs(movimento.yi - movimento.yf) == dist and abs(movimento.xi - movimento.xf) <=dist
-        )
+        abs(movimento.xi - movimento.xf) == dist and abs(movimento.yi - movimento.yf) <= dist or
+        abs(movimento.yi - movimento.yf) == dist and abs(movimento.xi -
+                                                         movimento.xf) <= dist
+    )
 
-def dentro(x,y):
+
+def dentro(x, y):
     return (x >= 0 and x <= N-1 and y >= 0 and y <= N-1)
+
 
 def movimento_valido():
     if not dentro(movimento.xi, movimento.yi) or not dentro(movimento.xf, movimento.yf):
@@ -126,6 +139,7 @@ def movimento_valido():
         movimento.tipo = 1
         return True
 
+
 def tipo_jogo():
     print("Jogo de Ataxx")
     print("Escolha o modo de jogo:")
@@ -135,7 +149,9 @@ def tipo_jogo():
     tipo = input()
     return tipo
 
-def jogadas_validas_pos(jog, yi,xi,tipoAss,screen):
+
+def jogadas_validas_pos(jog, yi, xi, screen):
+    nmovs = 0
     if tabul[yi][xi] == jog:
         for k in range(N):
             for l in range(N):
@@ -145,46 +161,51 @@ def jogadas_validas_pos(jog, yi,xi,tipoAss,screen):
                 movimento.yf = k
                 movimento.xf = l
                 if movimento_valido():
-                    assinala_quad(k,l,screen)
+                    assinala_quad(k, l, screen)
+                    nmovs += 1
 
-def jogadas_validas():
-    k = -1
-    j = -1
+
+def jogadas_validas(jog):
+    nmovs = 0
     for i in range(N):
         for j in range(N):
-            if tabul[i][j] == jog:
-                for k in range(k, 2):
-                    for j in range(j, 2):
+            if tabul[i][j] == 0:
+                nmovs += 1
+    return nmovs
 
 
 def fim_jogo():
-    if (jogadas_validas(outroJog(movimento.jog),0) > 0): return -1
-    if (avalia(movimento.jog) > 0): return movimento.jog
-    elif (avalia(movimento.jog)<=0): return outroJog(movimento.jog)
+    if (jogadas_validas(outroJog(movimento.jog)) > 0):
+        return -1
+    # if (avalia(movimento.jog) > 0): return movimento.jog
+    # elif (avalia(movimento.jog)<=0): return outroJog(movimento.jog)
     else:
         return 0
 
-def jogada_Humano(cl, px, py,screen):
-    if cl == 0 and tabul[py][px]==movimento.jog:
+
+def jogada_Humano(cl, px, py, screen):
+    if cl == 0 and tabul[py][px] == movimento.jog:
         movimento.xi = px
         movimento.yi = py
-        assinala_quad(py, px,screen)
-        jogadas_validas_pos(movimento.jog,py,px,1,screen)
+        assinala_quad(py, px, screen)
+        jogadas_validas_pos(movimento.jog, py, px, screen)
     elif cl == 1:
         movimento.xf = px
         movimento.yf = py
-        assinala_quad(movimento.xf,movimento.yf,screen)
+        assinala_quad(movimento.xf, movimento.yf, screen)
+
 
 def main():
     cl = 0
     nMovs = 1
+    fim = 0
     movimento.jog = 1
     tipo = int(tipo_jogo())
     screen = pygame.display.set_mode((SIZE, SIZE))
     clock = pygame.time.Clock()
     screen.fill((0, 0, 0))
     mostra_tabul(screen, tabul)
-    clock.tick(60)
+    clock.tick(30)
     pygame.display.flip()
     running = True
     while running:
@@ -201,11 +222,11 @@ def main():
                 if nMovs % 2 == 1:
                     if tipo <= 2:
                         if cl == 0:
-                            jogada_Humano(cl, xi, yi,screen)
+                            jogada_Humano(cl, xi, yi, screen)
                             cl = 1
                             print("JOGADOR 1 ESCOLHEU PEÇA")
                         elif cl == 1:
-                            jogada_Humano(cl, xi, yi,screen)
+                            jogada_Humano(cl, xi, yi, screen)
                             cl = 0
                             print("JOGADOR 1 ESCOLHEU MOVIMENTO")
                             if movimento_valido():
@@ -213,19 +234,18 @@ def main():
                                 nMovs += 1
                                 movimento.jog = outroJog(movimento.jog)
                             mostra_tabul(screen, tabul)
-                        
+
                     # else:
                     #     jogada_PC(jog, nMovs)
-
 
                 else:
                     if tipo == 1 or tipo == 3:
                         if cl == 0:
-                            jogada_Humano(cl, xi, yi,screen)
+                            jogada_Humano(cl, xi, yi, screen)
                             cl = 1
                             print("JOGADOR 2 ESCOLHEU PEÇA")
                         elif cl == 1:
-                            jogada_Humano(cl, xi, yi,screen)
+                            jogada_Humano(cl, xi, yi, screen)
                             cl = 0
                             print("JOGADOR 2 ESCOLHEU MOVIMENTO")
                             if movimento_valido():
@@ -235,13 +255,16 @@ def main():
                             mostra_tabul(screen, tabul)
 
                     # else:
-                    #     jogada_PC(jog, nMovs)        
+                    #     jogada_PC(jog, nMovs)
                     # ...
-                    #   
-
+                    #
 
         pygame.display.flip()
-        # fim = fim_jogo() 
+        fim = fim_jogo()
+        if fim != -1:
+            pygame.quit()
+            running = False
+            finaliza(tipo, fim)
 
 
 main()
@@ -259,5 +282,14 @@ encadeamento de funções ATÉ ter de dar input a mais um mouse click, a funçã
 que recebe esse mouse click tem de ser feita dentro do if do evento do
 MOUSEBUTTONDOWN
 
+
+
+28/03
+O jogo base já funciona!
+As peças comem-se umas as outras e seguem todas as regras de movimento
+como esperado.
+O verificador da win condition não está a funcionar direito, tenho de fazer
+de raíz by myself.
+Tomorrow is gonna be a good day.
 
 '''
