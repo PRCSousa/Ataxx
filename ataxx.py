@@ -200,7 +200,10 @@ def fim_jogo():
         return 0
 
 def finaliza(tipo, fim):
-    print("Jogador", movimento.vencedor, "ganha !")
+    if movimento.vencedor !=0:
+        print("Jogador", movimento.vencedor, "ganha !")
+    else:
+        print("Empate!")
 
 
 def jogada_Humano(cl, px, py, screen):
