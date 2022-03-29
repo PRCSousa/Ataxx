@@ -1,4 +1,3 @@
-from asyncore import loop
 import pygame
 
 pygame.init()
@@ -26,6 +25,7 @@ class movimento:
     xf = 0
     jog = 0
     tipo = 0
+    vencedor = 0
 
 
 def copia():
@@ -78,11 +78,6 @@ def mostra_tabul(screen, tabul):
             elif tabul[r][c] == 2:
                 pygame.draw.ellipse(screen, (106, 90, 205), pygame.Rect(
                     c * sq + (sq / 4), r * sq + (sq / 4), sq / 2, sq / 2))
-
-
-def finaliza(tipo, fim):
-    print("Jogador ", movimento.jog, "ganha !")
-
 
 def comer():
     dx = -1
@@ -164,8 +159,15 @@ def jogadas_validas_pos(jog, yi, xi, screen):
                     assinala_quad(k, l, screen)
                     nmovs += 1
 
+def conta_pecas(jog):
+    pecas = 0
+    for i in range(N):
+        for j in range(N):
+             if tabul[i][j] == jog:
+                 pecas +=1
+    return pecas
 
-def jogadas_validas(jog):
+def jogadas_validas():
     nmovs = 0
     for i in range(N):
         for j in range(N):
@@ -175,12 +177,30 @@ def jogadas_validas(jog):
 
 
 def fim_jogo():
-    if (jogadas_validas(outroJog(movimento.jog)) > 0):
-        return -1
-    # if (avalia(movimento.jog) > 0): return movimento.jog
-    # elif (avalia(movimento.jog)<=0): return outroJog(movimento.jog)
+    n = jogadas_validas()
+    if conta_pecas(1) == 0 or conta_pecas(2) == 0:
+        if conta_pecas(1) == 0:
+            movimento.vencedor = 2
+            return -1
+        else: 
+            movimento.vencedor = 1
+            return -1
+    if n == 0:
+        if (conta_pecas(1) - conta_pecas(2) >= 0):
+            movimento.vencedor = 1
+            return -1
+        if (conta_pecas(1) - conta_pecas(2) < 0):
+            movimento.vencedor = 2
+            return -1
+        else:
+            movimento.vencedor = 0
+            return -1
     else:
+
         return 0
+
+def finaliza(tipo, fim):
+    print("Jogador", movimento.vencedor, "ganha !")
 
 
 def jogada_Humano(cl, px, py, screen):
@@ -261,11 +281,10 @@ def main():
 
         pygame.display.flip()
         fim = fim_jogo()
-        if fim != -1:
+        if fim == -1:
             pygame.quit()
             running = False
             finaliza(tipo, fim)
-
 
 main()
 
@@ -291,5 +310,12 @@ como esperado.
 O verificador da win condition não está a funcionar direito, tenho de fazer
 de raíz by myself.
 Tomorrow is gonna be a good day.
+
+29/03
+O jogo já verifica se alguem ficou sem peças,ou , no caso do tabuleiro ter sido
+completamente preenchido, quem tem mais peças.
+Ainda falta o caso de se um jogador ficar sem jogadas válidas, dá skip ao seu turno.
+De resto, só falta implementar as jogadas do computador, it shouldn't be that hard right?
+
 
 '''
