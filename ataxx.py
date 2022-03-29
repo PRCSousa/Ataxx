@@ -1,5 +1,5 @@
 import pygame
-
+import time
 pygame.init()
 SIZE = 600
 NTABS = 6
@@ -282,9 +282,12 @@ def main():
         pygame.display.flip()
         fim = fim_jogo()
         if fim == -1:
+            print("Jogador 1:", conta_pecas(1))
+            print("Jogador 2:", conta_pecas(2))
+            finaliza(tipo, fim)
+            time.sleep(5)
             pygame.quit()
             running = False
-            finaliza(tipo, fim)
 
 main()
 
