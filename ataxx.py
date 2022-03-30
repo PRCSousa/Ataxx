@@ -39,7 +39,7 @@ def letabul(ficheiro):
     tabul.N = int(f.readline())
     tabuleiro = []
     for i in range(tabul.N):
-        tabuleiro.append(list(map(int, f.readline(i).split())))
+        tabuleiro.append(list(map(int, f.readline().split())))
     f.close()
     tabul.tabuleiro = tabuleiro
 
