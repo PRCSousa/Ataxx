@@ -9,6 +9,7 @@ N = 7
 sq = SIZE / N
 MAX_FPS = 15
 
+
 class tabul:
     tabul = [
         [1, 0, 0, 0, 0, 0, 2],
@@ -20,6 +21,7 @@ class tabul:
         [2, 0, 0, 0, 0, 0, 1],
     ]
 
+
 class movimento:
     xi = 0
     yi = 0
@@ -29,17 +31,21 @@ class movimento:
     tipo = 0
     vencedor = 0
 
+
 class bestmov:
     xi = 0
     yi = 0
     yf = 0
     xf = 0
 
+
 class save:
     game = []
 
+
 def copia():
     save.game = copy.deepcopy(tabul.tabul)
+
 
 def restaura():
     tabul.tabul = save.game
@@ -84,6 +90,7 @@ def mostra_tabul(screen):
                 pygame.draw.ellipse(screen, (106, 90, 205), pygame.Rect(
                     c * sq + (sq / 4), r * sq + (sq / 4), sq / 2, sq / 2))
 
+
 def comer():
     dx = -1
     dy = -1
@@ -93,46 +100,23 @@ def comer():
                 if movimento.yf + dy == -1 and movimento.xf + dx == -1:
                     if tabul.tabul[0][0] == outroJog(movimento.jog):
                         tabul.tabul[movimento.yf + dy +
-                              1][movimento.xf + dx+1] = movimento.jog
+                                    1][movimento.xf + dx+1] = movimento.jog
                 elif movimento.yf + dy == -1:
                     if tabul.tabul[0][movimento.xf + dx] == outroJog(movimento.jog):
                         tabul.tabul[movimento.yf + dy +
-                              1][movimento.xf + dx] = movimento.jog
+                                    1][movimento.xf + dx] = movimento.jog
                 elif movimento.xf + dx == -1:
                     if tabul.tabul[movimento.yf + dy][0] == outroJog(movimento.jog):
                         tabul.tabul[movimento.yf + dy][movimento.xf +
-                                                 dx+1] = movimento.jog
+                                                       dx+1] = movimento.jog
 
                 elif tabul.tabul[movimento.yf + dy][movimento.xf + dx] == outroJog(movimento.jog):
-                    tabul.tabul[movimento.yf + dy][movimento.xf + dx] = movimento.jog
+                    tabul.tabul[movimento.yf +
+                                dy][movimento.xf + dx] = movimento.jog
             except IndexError:
                 pass
         dy = -1
 
-def comer_bot():
-    dx = -1
-    dy = -1
-    for dx in range(dx, 2):
-        for dy in range(dy, 2):
-            try:
-                if bestmov.yf + dy == -1 and bestmov.xf + dx == -1:
-                    if tabul.tabul[0][0] == outroJog(movimento.jog):
-                        tabul.tabul[bestmov.yf + dy +
-                              1][bestmov.xf + dx+1] = movimento.jog
-                elif bestmov.yf + dy == -1:
-                    if tabul.tabul[0][bestmov.xf + dx] == outroJog(movimento.jog):
-                        tabul.tabul[bestmov.yf + dy +
-                              1][bestmov.xf + dx] = movimento.jog
-                elif bestmov.xf + dx == -1:
-                    if tabul.tabul[bestmov.yf + dy][0] == outroJog(movimento.jog):
-                        tabul.tabul[bestmov.yf + dy][bestmov.xf +
-                                                 dx+1] = movimento.jog
-
-                elif tabul.tabul[bestmov.yf + dy][bestmov.xf + dx] == outroJog(movimento.jog):
-                    tabul.tabul[bestmov.yf + dy][bestmov.xf + dx] = movimento.jog
-            except IndexError:
-                pass
-        dy = -1
 
 def executa_movimento():
     tabul.tabul[movimento.yf][movimento.xf] = movimento.jog
@@ -140,11 +124,6 @@ def executa_movimento():
         tabul.tabul[movimento.yi][movimento.xi] = 0
     comer()
 
-def executa_movimento_bot():
-    tabul.tabul[bestmov.yf][bestmov.xf] = movimento.jog
-    if movimento.tipo == 1:
-        tabul.tabul[bestmov.yi][bestmov.xi] = 0
-    comer_bot()
 
 def avalia():
     return conta_pecas(movimento.jog) - conta_pecas(outroJog(movimento.jog))
@@ -154,6 +133,7 @@ def adjacente(dist):
     return(
         abs(movimento.xi - movimento.xf) == dist and abs(movimento.yi - movimento.yf) <= dist or
         abs(movimento.yi - movimento.yf) == dist and abs(movimento.xi - movimento.xf) <= dist)
+
 
 def dentro(x, y):
     return (x >= 0 and x <= N-1 and y >= 0 and y <= N-1)
@@ -194,13 +174,15 @@ def jogadas_validas_pos(jog, yi, xi, screen):
                     assinala_quad(k, l, screen)
                     nmovs += 1
 
+
 def conta_pecas(jog):
     pecas = 0
     for i in range(N):
         for j in range(N):
-             if tabul.tabul[i][j] == jog:
-                 pecas +=1
+            if tabul.tabul[i][j] == jog:
+                pecas += 1
     return pecas
+
 
 def jogadas_validas():
     nmovs = 0
@@ -217,7 +199,7 @@ def fim_jogo():
         if conta_pecas(1) == 0:
             movimento.vencedor = 2
             return -1
-        else: 
+        else:
             movimento.vencedor = 1
             return -1
     if n == 0:
@@ -234,8 +216,9 @@ def fim_jogo():
 
         return 0
 
+
 def finaliza(tipo, fim):
-    if movimento.vencedor !=0:
+    if movimento.vencedor != 0:
         print("Jogador", movimento.vencedor, "ganha !")
     else:
         print("Empate!")
@@ -252,22 +235,19 @@ def jogada_Humano(cl, px, py, screen):
         movimento.yf = py
         assinala_quad(movimento.xf, movimento.yf, screen)
 
+
 def jogada_PC():
     bestav = -1000
     for yi in range(N):
         for xi in range(N):
-            print("peça em", yi, xi, "?")
             if tabul.tabul[yi][xi] == movimento.jog:
-                print("sim")
-                for k in range(0,N):
-                    for l in range(0,N):
+                for k in range(0, N):
+                    for l in range(0, N):
                         movimento.yi = yi
                         movimento.xi = xi
                         movimento.yf = l
                         movimento.xf = k
-                        print("de",yi,xi,"para",movimento.yf,movimento.xf,"é valido?")
                         if movimento_valido():
-                            print("sim")
                             copia()
                             executa_movimento()
                             av = avalia()
@@ -278,12 +258,12 @@ def jogada_PC():
                                 bestmov.xi = movimento.xi
                                 bestmov.yf = movimento.yf
                                 bestmov.xf = movimento.xf
-                        else:
-                            print("não")
-            else:
-                print("não")
-    executa_movimento_bot()
-    print("Peça",bestmov.yi, bestmov.xi, "para",bestmov.yf, bestmov.xf)
+    movimento.yi = bestmov.yi
+    movimento.xi = bestmov.xi
+    movimento.yf = bestmov.yf
+    movimento.xf = bestmov.xf
+    executa_movimento()
+
 
 def main():
     cl = 0
@@ -346,10 +326,12 @@ def main():
                             mostra_tabul(screen)
 
                     else:
+                        print("Jogada do PC")
                         jogada_PC()
+                        nMovs += 1
+                        mostra_tabul(screen)
                         movimento.jog = outroJog(movimento.jog)
-                    
-                    
+
         try:
             pygame.display.flip()
         except pygame.error:
@@ -362,6 +344,7 @@ def main():
             time.sleep(5)
             pygame.quit()
             running = False
+
 
 main()
 
