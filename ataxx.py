@@ -13,12 +13,12 @@ MAX_FPS = 15
 class tabul:
     tabul = [
         [1, 0, 0, 0, 0, 0, 2],
-        [0, 0, 0, 2, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 8, 0, 0, 0],
         [0, 0, 8, 0, 8, 0, 0],
         [0, 0, 0, 8, 0, 0, 0],
         [0, 0, 0, 1, 0, 0, 0],
-        [2, 0, 0, 0, 0, 0, 1],
+        [0, 0, 0, 0, 0, 0, 1],
     ]
 
 
@@ -262,7 +262,8 @@ def jogada_PC():
     movimento.xi = bestmov.xi
     movimento.yf = bestmov.yf
     movimento.xf = bestmov.xf
-    executa_movimento()
+    if movimento_valido():
+        executa_movimento()
 
 
 def main():
@@ -295,30 +296,9 @@ def main():
                         if cl == 0:
                             jogada_Humano(cl, xi, yi, screen)
                             cl = 1
-                            print("JOGADOR 1 ESCOLHEU PEÇA")
                         elif cl == 1:
                             jogada_Humano(cl, xi, yi, screen)
                             cl = 0
-                            print("JOGADOR 1 ESCOLHEU MOVIMENTO")
-                            if movimento_valido():
-                                executa_movimento()
-                                nMovs += 1
-                                movimento.jog = outroJog(movimento.jog)
-                            mostra_tabul(screen)
-
-                    # else:
-                    #     jogada_PC(jog, nMovs)
-
-                else:
-                    if tipo == 1 or tipo == 3:
-                        if cl == 0:
-                            jogada_Humano(cl, xi, yi, screen)
-                            cl = 1
-                            print("JOGADOR 2 ESCOLHEU PEÇA")
-                        elif cl == 1:
-                            jogada_Humano(cl, xi, yi, screen)
-                            cl = 0
-                            print("JOGADOR 2 ESCOLHEU MOVIMENTO")
                             if movimento_valido():
                                 executa_movimento()
                                 nMovs += 1
@@ -326,7 +306,27 @@ def main():
                             mostra_tabul(screen)
 
                     else:
-                        print("Jogada do PC")
+                        jogada_PC()
+                        nMovs += 1
+                        mostra_tabul(screen)
+                        movimento.jog = outroJog(movimento.jog)
+
+
+                else:
+                    if tipo == 1:
+                        if cl == 0:
+                            jogada_Humano(cl, xi, yi, screen)
+                            cl = 1
+                        elif cl == 1:
+                            jogada_Humano(cl, xi, yi, screen)
+                            cl = 0
+                            if movimento_valido():
+                                executa_movimento()
+                                nMovs += 1
+                                movimento.jog = outroJog(movimento.jog)
+                            mostra_tabul(screen)
+
+                    else:
                         jogada_PC()
                         nMovs += 1
                         mostra_tabul(screen)
@@ -378,5 +378,11 @@ Ainda falta o caso de se um jogador ficar sem jogadas válidas, dá skip ao seu 
 De resto, só falta implementar as jogadas do computador, it shouldn't be that hard right?
 
 A jogada do computador está burra, idk what is going on, must be tested.
+
+30/03
+
+Humano x PC e PC x PC funcionam.
+Ainda não tenho isto. "Ainda falta o caso de se um jogador ficar sem jogadas válidas, dá skip ao seu turno."
+
 
 '''
