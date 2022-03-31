@@ -2,14 +2,16 @@ import pygame
 import time
 import copy
 
+
+SIZE = 600
+
 class tabul:
-    N = 7
+    N = 1
+    sq = SIZE / N
     tabuleiro = []
 
 
 pygame.init()
-SIZE = 600
-sq = SIZE / tabul.N
 MAX_FPS = 15
 
 
@@ -37,6 +39,7 @@ class save:
 def letabul(ficheiro):
     f = open(ficheiro)
     tabul.N = int(f.readline())
+    tabul.sq = SIZE / tabul.N
     tabuleiro = []
     for i in range(tabul.N):
         tabuleiro.append(list(map(int, f.readline().split())))
@@ -45,7 +48,13 @@ def letabul(ficheiro):
 
 
 def escolhetabul():
-    numtabul = input("Tabuleiros:\n 1) 7x7 Original\n 2) 10x10 sem paredes\n")
+    print("Tabuleiros:")
+    print("1) 7x7 Original")
+    print("2) 10x10 Sem paredes")
+    print("3) 9x9 Circular")
+    print("4) 13x13 Coração")
+    print("5) 10x10 Alvo")
+    numtabul = input()
     tabuleiro = "tabuleiros/tab"+numtabul+".txt"
     return tabuleiro
 
@@ -66,18 +75,18 @@ def outroJog(jog):
 
 def assinala_quad(x, y, screen):
     if movimento.jog == 1:
-        pygame.draw.ellipse(screen, (220, 20, 60), (y*sq+3, x*sq+3, 6, 6))
-        pygame.draw.ellipse(screen, (220, 20, 60), (y*sq+sq-11, x*sq+3, 6, 6))
-        pygame.draw.ellipse(screen, (220, 20, 60), (y*sq+3, x*sq+sq-11, 6, 6))
+        pygame.draw.ellipse(screen, (220, 20, 60), (y*tabul.sq+3, x*tabul.sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (220, 20, 60), (y*tabul.sq+tabul.sq-11, x*tabul.sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (220, 20, 60), (y*tabul.sq+3, x*tabul.sq+tabul.sq-11, 6, 6))
         pygame.draw.ellipse(screen, (220, 20, 60),
-                            (y*sq+sq-11, x*sq+sq-11, 6, 6))
+                            (y*tabul.sq+tabul.sq-11, x*tabul.sq+tabul.sq-11, 6, 6))
 
     else:
-        pygame.draw.ellipse(screen, (106, 90, 205), (y*sq+3, x*sq+3, 6, 6))
-        pygame.draw.ellipse(screen, (106, 90, 205), (y*sq+sq-11, x*sq+3, 6, 6))
-        pygame.draw.ellipse(screen, (106, 90, 205), (y*sq+3, x*sq+sq-11, 6, 6))
+        pygame.draw.ellipse(screen, (106, 90, 205), (y*tabul.sq+3, x*tabul.sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (106, 90, 205), (y*tabul.sq+tabul.sq-11, x*tabul.sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (106, 90, 205), (y*tabul.sq+3, x*tabul.sq+tabul.sq-11, 6, 6))
         pygame.draw.ellipse(screen, (106, 90, 205),
-                            (y*sq+sq-11, x*sq+sq-11, 6, 6))
+                            (y*tabul.sq+tabul.sq-11, x*tabul.sq+tabul.sq-11, 6, 6))
 
 
 def mostra_tabul(screen):
@@ -85,16 +94,16 @@ def mostra_tabul(screen):
         for c in range(tabul.N):
             color = pygame.Color(255, 255, 255)
             pygame.draw.rect(screen, color, pygame.Rect(
-                c * sq, r * sq, sq - 2, sq - 2))
+                c * tabul.sq, r * tabul.sq, tabul.sq - 2, tabul.sq - 2))
             if tabul.tabuleiro[r][c] == 8:
                 pygame.draw.rect(screen, (128, 128, 128),
-                                 (c * sq, r * sq, sq - 2, sq - 2))
+                                 (c * tabul.sq, r * tabul.sq, tabul.sq - 2, tabul.sq - 2))
             if tabul.tabuleiro[r][c] == 1:
                 pygame.draw.ellipse(screen, (220, 20, 60), pygame.Rect(
-                    c * sq + (sq / 4), r * sq + (sq / 4), sq / 2, sq / 2))
+                    c * tabul.sq + (tabul.sq / 4), r * tabul.sq + (tabul.sq / 4), tabul.sq / 2, tabul.sq / 2))
             elif tabul.tabuleiro[r][c] == 2:
                 pygame.draw.ellipse(screen, (106, 90, 205), pygame.Rect(
-                    c * sq + (sq / 4), r * sq + (sq / 4), sq / 2, sq / 2))
+                    c * tabul.sq + (tabul.sq / 4), r * tabul.sq + (tabul.sq / 4), tabul.sq / 2, tabul.sq / 2))
 
 
 def comer():
@@ -280,7 +289,6 @@ def main():
     tipo = int(tipo_jogo())
     tabuleiro = escolhetabul()
     letabul(tabuleiro)
-    print(tabul.tabuleiro)
     screen = pygame.display.set_mode((SIZE, SIZE))
     clock = pygame.time.Clock()
     screen.fill((0, 0, 0))
@@ -298,8 +306,8 @@ def main():
             elif e.type == pygame.MOUSEBUTTONDOWN:
                 click = pygame.mouse.get_pos()
 
-                yi = int(click[1] // sq)
-                xi = int(click[0] // sq)
+                yi = int(click[1] // tabul.sq)
+                xi = int(click[0] // tabul.sq)
                 if nMovs % 2 == 1:
                     if tipo <= 2:
                         if cl == 0:
@@ -371,7 +379,6 @@ que recebe esse mouse click tem de ser feita dentro do if do evento do
 MOUSEBUTTONDOWN
 
 
-
 28/03
 O jogo base já funciona!
 As peças comem-se umas as outras e seguem todas as regras de movimento
@@ -387,6 +394,7 @@ Ainda falta o caso de se um jogador ficar sem jogadas válidas, dá skip ao seu 
 De resto, só falta implementar as jogadas do computador, it shouldn't be that hard right?
 
 A jogada do computador está burra, idk what is going on, must be tested.
+
 
 30/03
 
