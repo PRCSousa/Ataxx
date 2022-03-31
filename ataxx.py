@@ -1,9 +1,10 @@
 import pygame
 import time
 import copy
-
+import random
 
 SIZE = 600
+
 
 class tabul:
     N = 1
@@ -58,6 +59,7 @@ def escolhetabul():
     tabuleiro = "tabuleiros/tab"+numtabul+".txt"
     return tabuleiro
 
+
 def copia():
     save.game = copy.deepcopy(tabul.tabuleiro)
 
@@ -75,16 +77,22 @@ def outroJog(jog):
 
 def assinala_quad(x, y, screen):
     if movimento.jog == 1:
-        pygame.draw.ellipse(screen, (220, 20, 60), (y*tabul.sq+3, x*tabul.sq+3, 6, 6))
-        pygame.draw.ellipse(screen, (220, 20, 60), (y*tabul.sq+tabul.sq-11, x*tabul.sq+3, 6, 6))
-        pygame.draw.ellipse(screen, (220, 20, 60), (y*tabul.sq+3, x*tabul.sq+tabul.sq-11, 6, 6))
+        pygame.draw.ellipse(screen, (220, 20, 60),
+                            (y*tabul.sq+3, x*tabul.sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (220, 20, 60),
+                            (y*tabul.sq+tabul.sq-11, x*tabul.sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (220, 20, 60),
+                            (y*tabul.sq+3, x*tabul.sq+tabul.sq-11, 6, 6))
         pygame.draw.ellipse(screen, (220, 20, 60),
                             (y*tabul.sq+tabul.sq-11, x*tabul.sq+tabul.sq-11, 6, 6))
 
     else:
-        pygame.draw.ellipse(screen, (106, 90, 205), (y*tabul.sq+3, x*tabul.sq+3, 6, 6))
-        pygame.draw.ellipse(screen, (106, 90, 205), (y*tabul.sq+tabul.sq-11, x*tabul.sq+3, 6, 6))
-        pygame.draw.ellipse(screen, (106, 90, 205), (y*tabul.sq+3, x*tabul.sq+tabul.sq-11, 6, 6))
+        pygame.draw.ellipse(screen, (106, 90, 205),
+                            (y*tabul.sq+3, x*tabul.sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (106, 90, 205),
+                            (y*tabul.sq+tabul.sq-11, x*tabul.sq+3, 6, 6))
+        pygame.draw.ellipse(screen, (106, 90, 205),
+                            (y*tabul.sq+3, x*tabul.sq+tabul.sq-11, 6, 6))
         pygame.draw.ellipse(screen, (106, 90, 205),
                             (y*tabul.sq+tabul.sq-11, x*tabul.sq+tabul.sq-11, 6, 6))
 
@@ -115,19 +123,19 @@ def comer():
                 if movimento.yf + dy == -1 and movimento.xf + dx == -1:
                     if tabul.tabuleiro[0][0] == outroJog(movimento.jog):
                         tabul.tabuleiro[movimento.yf + dy +
-                                    1][movimento.xf + dx+1] = movimento.jog
+                                        1][movimento.xf + dx+1] = movimento.jog
                 elif movimento.yf + dy == -1:
                     if tabul.tabuleiro[0][movimento.xf + dx] == outroJog(movimento.jog):
                         tabul.tabuleiro[movimento.yf + dy +
-                                    1][movimento.xf + dx] = movimento.jog
+                                        1][movimento.xf + dx] = movimento.jog
                 elif movimento.xf + dx == -1:
                     if tabul.tabuleiro[movimento.yf + dy][0] == outroJog(movimento.jog):
                         tabul.tabuleiro[movimento.yf + dy][movimento.xf +
-                                                       dx+1] = movimento.jog
+                                                           dx+1] = movimento.jog
 
                 elif tabul.tabuleiro[movimento.yf + dy][movimento.xf + dx] == outroJog(movimento.jog):
                     tabul.tabuleiro[movimento.yf +
-                                dy][movimento.xf + dx] = movimento.jog
+                                    dy][movimento.xf + dx] = movimento.jog
             except IndexError:
                 pass
         dy = -1
@@ -141,7 +149,8 @@ def executa_movimento():
 
 
 def avalia():
-    return conta_pecas(movimento.jog) - conta_pecas(outroJog(movimento.jog))
+    salt = random.random()
+    return (conta_pecas(movimento.jog) - conta_pecas(outroJog(movimento.jog))+salt)
 
 
 def adjacente(dist):
@@ -176,7 +185,6 @@ def tipo_jogo():
 
 
 def jogadas_validas_pos(jog, yi, xi, screen):
-    nmovs = 0
     if tabul.tabuleiro[yi][xi] == jog:
         for k in range(tabul.N):
             for l in range(tabul.N):
@@ -187,7 +195,22 @@ def jogadas_validas_pos(jog, yi, xi, screen):
                 movimento.xf = l
                 if movimento_valido():
                     assinala_quad(k, l, screen)
-                    nmovs += 1
+
+# def jogadas_validas_total(jog):
+#     nmovs = 0
+#     for y in range(tabul.N):
+#         for x in range(tabul.N):
+#             if tabul.tabuleiro[y][x] == jog:
+#                 for k in range(tabul.N):
+#                     for l in range(tabul.N):
+#                         movimento.jog = jog
+#                         movimento.yi = y
+#                         movimento.xi = x
+#                         movimento.yf = k
+#                         movimento.xf = l
+#                         if movimento_valido():
+#                             nmovs += 1
+#     return nmovs
 
 
 def conta_pecas(jog):
@@ -199,7 +222,7 @@ def conta_pecas(jog):
     return pecas
 
 
-def jogadas_validas():
+def quad_validos():
     nmovs = 0
     for i in range(tabul.N):
         for j in range(tabul.N):
@@ -209,7 +232,7 @@ def jogadas_validas():
 
 
 def fim_jogo():
-    n = jogadas_validas()
+    n = quad_validos()
     if conta_pecas(1) == 0 or conta_pecas(2) == 0:
         if conta_pecas(1) == 0:
             movimento.vencedor = 2
@@ -228,7 +251,6 @@ def fim_jogo():
             movimento.vencedor = 0
             return -1
     else:
-
         return 0
 
 
@@ -327,7 +349,6 @@ def main():
                         nMovs += 1
                         mostra_tabul(screen)
                         movimento.jog = outroJog(movimento.jog)
-
 
                 else:
                     if tipo == 1:
