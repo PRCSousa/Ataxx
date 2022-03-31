@@ -164,6 +164,8 @@ def dentro(x, y):
 
 
 def movimento_valido():
+    if abs(movimento.yf - movimento.yi) == 2 and abs(movimento.xf - movimento.xi) == 1 or abs(movimento.xf - movimento.xi) == 2 and abs(movimento.yf - movimento.yi) == 1:
+       return False
     if not dentro(movimento.xi, movimento.yi) or not dentro(movimento.xf, movimento.yf):
         return False
     if tabul.tabuleiro[movimento.yi][movimento.xi] == movimento.jog and tabul.tabuleiro[movimento.yf][movimento.xf] == 0 and adjacente(1):
