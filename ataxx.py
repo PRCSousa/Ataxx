@@ -59,11 +59,13 @@ class save:
 
 def escolhetabul():
     print("Tabuleiros:")
-    print("1) 7x7 Original")
-    print("2) 10x10 Sem paredes")
-    print("3) 9x9 Circular")
-    print("4) 13x13 Coração")
-    print("5) 10x10 Alvo")
+    print("1) Original")
+    print("2) Sem paredes")
+    print("3) Circular")
+    print("4) Coração")
+    print("5) Alvo")
+    print("6) Xadrez")
+    print("7) Foxy")
     numtabul = input()
     tabuleiro = "tabuleiros/tab"+numtabul+".txt"
     return tabuleiro
