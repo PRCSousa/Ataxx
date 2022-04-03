@@ -9,7 +9,11 @@ import time
 import copy
 import random
 
-# Window Size
+
+# Begins the pygame library and sets the max fps to 15 frames per second
+
+pygame.init()
+MAX_FPS = 15
 SIZE = 600
 
 # Class that saves the gamestate, like the size of the board (N), the square size (dynamic to the window size), and the board setup
@@ -20,12 +24,7 @@ class gamestate:
     sq = SIZE / N
     tabuleiro = []
     nMovs = 1
-
-# Begins the pygame library and sets the max fps to 15 frames per second
-
-
-pygame.init()
-MAX_FPS = 15
+    vencedor = 0
 
 # This class saves the movement data (initial and final x and y's, the player moving, the game type and the winner)
 
@@ -37,7 +36,6 @@ class movimento:
     xf = 0
     jog = 0
     tipo = 0
-    vencedor = 0
 
 # This class is a temporary data saver, which saves the best move possible by the computer
 
@@ -292,20 +290,20 @@ def fim_jogo():
     n = quad_validos()
     if conta_pecas(1) == 0 or conta_pecas(2) == 0:
         if conta_pecas(1) == 0:
-            movimento.vencedor = 2
+            gamestate.vencedor = 2
             return -1
         else:
-            movimento.vencedor = 1
+            gamestate.vencedor = 1
             return -1
     if n == 0:
         if (conta_pecas(1) - conta_pecas(2) >= 0):
-            movimento.vencedor = 1
+            gamestate.vencedor = 1
             return -1
         if (conta_pecas(1) - conta_pecas(2) < 0):
-            movimento.vencedor = 2
+            gamestate.vencedor = 2
             return -1
         else:
-            movimento.vencedor = 0
+            gamestate.vencedor = 0
             return -1
     else:
         return 0
@@ -314,8 +312,8 @@ def fim_jogo():
 
 
 def finaliza(tipo, fim):
-    if movimento.vencedor != 0:
-        if movimento.vencedor == 1:
+    if gamestate.vencedor != 0:
+        if gamestate.vencedor == 1:
             print("Jogador vermelho ganha !")
         else:
             print("Jogador azul ganha !")
@@ -463,7 +461,7 @@ def main():
                                 gamestate.nMovs += 1
                                 movimento.jog = outroJog(movimento.jog)
                             mostra_tabul(screen)
-            pygame.display.flip()                
+            pygame.display.flip()
         # Computer's turn
 
         if gamestate.nMovs % 2 != 1 and tipo >= 2:
@@ -472,14 +470,14 @@ def main():
             mostra_tabul(screen)
             movimento.jog = outroJog(movimento.jog)
             time.sleep(1)
-            pygame.display.flip()            
+            pygame.display.flip()
         if tipo == 3:
             jogada_PC()
             gamestate.nMovs += 1
             mostra_tabul(screen)
             movimento.jog = outroJog(movimento.jog)
             time.sleep(1)
-            pygame.display.flip() 
+            pygame.display.flip()
 
         try:
             pygame.display.flip()
