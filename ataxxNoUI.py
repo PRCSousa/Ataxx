@@ -3,6 +3,7 @@
 # Random: This lib generates pseudo-random values to enhance the PC human-like behaviour
 
 import copy
+import numpy
 import random
 
 # Window Size
@@ -297,7 +298,7 @@ def jogada_PC():
 #  Begins the loop that sets the game playing
 
 
-def main():
+def game():
     cl = 0
     fim = 0
     movimento.jog = 1
@@ -336,15 +337,24 @@ class resultados:
     empate = 0
     jogadas = []
     diff = []
+    media = 0
+
+def calculos():
+    resultados.media = numpy.median(resultados.diff)
+
+
+
 
 tabuleiro = escolhetabul()
-total = int(input("Quantos testes quer realizar?:"))
+
+total = int(input("Quantos testes quer realizar?: "))
 
 for i in range(total):
-    main()
+    game()
 
-print("Vitórias do Vermelho: ", resultados.vermelho)
-print("Vitórias do Azul: ",resultados.azul)
-print("Empates: ", resultados.empate)
-print("Diferença de peças: ")
-print(resultados.diff)
+calculos()
+
+print("Vitórias do Vermelho: ",    resultados.vermelho)
+print("Vitórias do Azul: ",        resultados.azul)
+print("Empates: ",                 resultados.empate)
+print("Diferença de peças média: ",resultados.media)
