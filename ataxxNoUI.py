@@ -16,6 +16,7 @@ class gamestate:
     sq = SIZE / N
     tabuleiro = []
     nMovs = 1
+    vencedor = 0
 
 
 # This class saves the movement data (initial and final x and y's, the player moving, the game type and the winner)
@@ -220,20 +221,20 @@ def fim_jogo():
     n = quad_validos()
     if conta_pecas(1) == 0 or conta_pecas(2) == 0:
         if conta_pecas(1) == 0:
-            movimento.vencedor = 2
+            gamestate.vencedor = 2
             return -1
         else:
-            movimento.vencedor = 1
+            gamestate.vencedor = 1
             return -1
     if n == 0:
-        if (conta_pecas(1) - conta_pecas(2) >= 0):
-            movimento.vencedor = 1
+        if (conta_pecas(1) - conta_pecas(2) > 0):
+            gamestate.vencedor = 1
             return -1
         if (conta_pecas(1) - conta_pecas(2) < 0):
-            movimento.vencedor = 2
+            gamestate.vencedor = 2
             return -1
         else:
-            movimento.vencedor = 0
+            gamestate.vencedor = 0
             return -1
     else:
         return 0
@@ -242,13 +243,13 @@ def fim_jogo():
 
 
 def finaliza():
-    if movimento.vencedor != 0:
-        if movimento.vencedor == 1:
-            print("Jogador vermelho ganha !")
+    if gamestate.vencedor != 0:
+        if gamestate.vencedor == 1:
+            resultados.vermelho += 1
         else:
-            print("Jogador azul ganha !")
+            resultados.azul += 1
     else:
-        print("Empate!")
+        resultados.empate += 1
 
 
 # Manages the computer made movements:
@@ -324,12 +325,26 @@ def main():
 
         fim = fim_jogo()
         if fim == -1:
-            print("Jogador Vermelho:", conta_pecas(1))
-            print("Jogador Azul:", conta_pecas(2))
+            resultados.diff.append(conta_pecas(1) - conta_pecas(2))
             finaliza()
             running = False
 
 
+class resultados:
+    vermelho = 0
+    azul = 0
+    empate = 0
+    jogadas = []
+    diff = []
+
 tabuleiro = escolhetabul()
-for i in range(20):
+total = int(input("Quantos testes quer realizar?:"))
+
+for i in range(total):
     main()
+
+print("Vitórias do Vermelho: ", resultados.vermelho)
+print("Vitórias do Azul: ",resultados.azul)
+print("Empates: ", resultados.empate)
+print("Diferença de peças: ")
+print(resultados.diff)
