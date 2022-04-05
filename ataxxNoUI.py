@@ -339,10 +339,9 @@ class resultados:
     diff = []
     media = 0
 
+
 def calculos():
     resultados.media = numpy.median(resultados.diff)
-
-
 
 
 tabuleiro = escolhetabul()
@@ -354,7 +353,7 @@ for i in range(total):
 
 calculos()
 
-print("Vitórias do Vermelho: ",    resultados.vermelho)
-print("Vitórias do Azul: ",        resultados.azul)
-print("Empates: ",                 resultados.empate)
-print("Diferença de peças média: ",resultados.media)
+print("Vitórias do Vermelho: ",     resultados.vermelho)
+print("Vitórias do Azul: ",         resultados.azul)
+print("Empates: ",                  resultados.empate)
+print("Diferença de peças média: ", resultados.media)
