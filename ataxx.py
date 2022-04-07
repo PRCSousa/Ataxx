@@ -9,7 +9,6 @@ import time
 import copy
 import random
 
-
 # Begins the pygame library and sets the max fps to 15 frames per second
 
 pygame.init()
@@ -37,7 +36,16 @@ class movimento:
     jog = 0
     tipo = 0
 
-# This class is a temporary data saver, which saves the best move possible by the computer
+
+# These classes sre temporary data savers:
+# The first one is used just to test if said move is possible
+# The second one saves the best move the computer can play
+
+class totalmov:
+    xi = 0
+    yi = 0
+    yf = 0
+    xf = 0
 
 
 class bestmov:
@@ -244,6 +252,21 @@ def jogadas_validas_pos(jog, yi, xi, screen):
 # Checks the amount of valid moves a player has
 
 
+def movimento_teste():
+    if abs(totalmov.yf - totalmov.yi) == 2 and abs(totalmov.xf - totalmov.xi) == 1 or abs(totalmov.xf - totalmov.xi) == 2 and abs(totalmov.yf - totalmov.yi) == 1:
+        return False
+    if not dentro(totalmov.xi, totalmov.yi) or not dentro(totalmov.xf, totalmov.yf):
+        return False
+    if gamestate.tabuleiro[totalmov.yi][totalmov.xi] == movimento.jog and gamestate.tabuleiro[totalmov.yf][totalmov.xf] == 0 and (adjacente_teste(1) or adjacente_teste(2)):
+        return True
+
+
+def adjacente_teste(dist):
+    return(
+        abs(totalmov.xi - totalmov.xf) == dist and abs(totalmov.yi - totalmov.yf) <= dist or
+        abs(totalmov.yi - totalmov.yf) == dist and abs(totalmov.xi - totalmov.xf) <= dist)
+
+
 def jogadas_validas_total(jog):
     nmovs = 0
     for y in range(gamestate.N):
@@ -252,11 +275,11 @@ def jogadas_validas_total(jog):
                 for k in range(gamestate.N):
                     for l in range(gamestate.N):
                         movimento.jog = jog
-                        movimento.yi = y
-                        movimento.xi = x
-                        movimento.yf = k
-                        movimento.xf = l
-                        if movimento_valido():
+                        totalmov.yi = y
+                        totalmov.xi = x
+                        totalmov.yf = k
+                        totalmov.xf = l
+                        if movimento_teste():
                             nmovs += 1
     return nmovs
 
@@ -327,10 +350,6 @@ def finaliza(tipo, fim):
 
 
 def jogada_Humano(cl, px, py, screen):
-    # Currently Not working
-    # if jogadas_validas_total(movimento.jog) == 0:
-    #     gamestate.nMovs += 1
-    #     return
     if cl == 0 and gamestate.tabuleiro[py][px] == movimento.jog:
         movimento.xi = px
         movimento.yi = py
@@ -347,10 +366,6 @@ def jogada_Humano(cl, px, py, screen):
 
 
 def jogada_PC():
-    # Currently Not working
-    # if jogadas_validas_total(movimento.jog) == 0:
-    #     gamestate.nMovs += 1
-    #     return
     bestav = -1000
     for yi in range(gamestate.N):
         for xi in range(gamestate.N):
@@ -401,10 +416,15 @@ def main():
     running = True
 
     # While the game plays, it checks for events:
+    # If the next player has no moves left, it skips his turn
     # If the X is pressed, the game exits
     # If a click is made, it begins a chain of events explained next
+    # It constatnly checks if the game has reached any end condition, and if it has, it finalizes it
 
     while running:
+
+        if jogadas_validas_total(movimento.jog) == 0:
+            movimento.jog = outroJog(movimento.jog)
 
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
@@ -461,7 +481,11 @@ def main():
                                 gamestate.nMovs += 1
                                 movimento.jog = outroJog(movimento.jog)
                             mostra_tabul(screen)
-            pygame.display.flip()
+            try:
+                pygame.display.flip()
+            except pygame.error:
+                pass
+
         # Computer's turn
 
         if gamestate.nMovs % 2 != 1 and tipo >= 2:
@@ -483,8 +507,6 @@ def main():
             pygame.display.flip()
         except pygame.error:
             pass
-
-        # It constatnly checks if the game has reached any end condition, and if it has, it finalizes it
 
         fim = fim_jogo()
         if fim == -1:
