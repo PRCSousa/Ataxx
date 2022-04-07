@@ -46,6 +46,7 @@ class totalmov:
     yi = 0
     yf = 0
     xf = 0
+    tipo = 0
 
 
 class bestmov:
@@ -63,7 +64,7 @@ class save:
 # Function to read the chosen board by the player
 
 
-def escolhetabul():
+def escolhe_tabul():
     print("Tabuleiros:")
     print("1) Original")
     print("2) Sem paredes")
@@ -79,7 +80,7 @@ def escolhetabul():
 # Function to, after the player has chosen the board, loads it into the gamestate class
 
 
-def letabul(ficheiro):
+def carrega_tabul(ficheiro):
     f = open(ficheiro)
     gamestate.N = int(f.readline())
     gamestate.sq = SIZE / gamestate.N
@@ -102,7 +103,7 @@ def restaura():
 # This function changes the player turn
 
 
-def outroJog(jog):
+def troca_jog(jog):
     if jog == 1:
         return 2
     else:
@@ -155,19 +156,19 @@ def comer():
         for dy in range(dy, 2):
             try:
                 if movimento.yf + dy == -1 and movimento.xf + dx == -1:
-                    if gamestate.tabuleiro[0][0] == outroJog(movimento.jog):
+                    if gamestate.tabuleiro[0][0] == troca_jog(movimento.jog):
                         gamestate.tabuleiro[movimento.yf + dy +
                                             1][movimento.xf + dx+1] = movimento.jog
                 elif movimento.yf + dy == -1:
-                    if gamestate.tabuleiro[0][movimento.xf + dx] == outroJog(movimento.jog):
+                    if gamestate.tabuleiro[0][movimento.xf + dx] == troca_jog(movimento.jog):
                         gamestate.tabuleiro[movimento.yf + dy +
                                             1][movimento.xf + dx] = movimento.jog
                 elif movimento.xf + dx == -1:
-                    if gamestate.tabuleiro[movimento.yf + dy][0] == outroJog(movimento.jog):
+                    if gamestate.tabuleiro[movimento.yf + dy][0] == troca_jog(movimento.jog):
                         gamestate.tabuleiro[movimento.yf + dy][movimento.xf +
                                                                dx+1] = movimento.jog
 
-                elif gamestate.tabuleiro[movimento.yf + dy][movimento.xf + dx] == outroJog(movimento.jog):
+                elif gamestate.tabuleiro[movimento.yf + dy][movimento.xf + dx] == troca_jog(movimento.jog):
                     gamestate.tabuleiro[movimento.yf +
                                         dy][movimento.xf + dx] = movimento.jog
             except IndexError:
@@ -189,15 +190,15 @@ def executa_movimento():
 
 def avalia():
     salt = random.random()
-    return (conta_pecas(movimento.jog) - conta_pecas(outroJog(movimento.jog))+salt)
+    return (conta_pecas(movimento.jog) - conta_pecas(troca_jog(movimento.jog))+salt)
 
 # Checks if the movement choice is either a jump or a multiplication
 
 
-def adjacente(dist):
+def adjacente(dist, classe):
     return(
-        abs(movimento.xi - movimento.xf) == dist and abs(movimento.yi - movimento.yf) <= dist or
-        abs(movimento.yi - movimento.yf) == dist and abs(movimento.xi - movimento.xf) <= dist)
+        abs(classe.xi - classe.xf) == dist and abs(classe.yi - classe.yf) <= dist or
+        abs(classe.yi - classe.yf) == dist and abs(classe.xi - classe.xf) <= dist)
 
 # Checks if the move is inside the board limits
 
@@ -209,16 +210,16 @@ def dentro(x, y):
 # Note: the first if removes the L like movement
 
 
-def movimento_valido():
-    if abs(movimento.yf - movimento.yi) == 2 and abs(movimento.xf - movimento.xi) == 1 or abs(movimento.xf - movimento.xi) == 2 and abs(movimento.yf - movimento.yi) == 1:
+def movimento_valido(classe):
+    if abs(classe.yf - classe.yi) == 2 and abs(classe.xf - classe.xi) == 1 or abs(classe.xf - classe.xi) == 2 and abs(classe.yf - classe.yi) == 1:
         return False
-    if not dentro(movimento.xi, movimento.yi) or not dentro(movimento.xf, movimento.yf):
+    if not dentro(classe.xi, classe.yi) or not dentro(classe.xf, classe.yf):
         return False
-    if gamestate.tabuleiro[movimento.yi][movimento.xi] == movimento.jog and gamestate.tabuleiro[movimento.yf][movimento.xf] == 0 and adjacente(1):
-        movimento.tipo = 0
+    if gamestate.tabuleiro[classe.yi][classe.xi] == movimento.jog and gamestate.tabuleiro[classe.yf][classe.xf] == 0 and adjacente(1, classe):
+        classe.tipo = 0
         return True
-    if gamestate.tabuleiro[movimento.yi][movimento.xi] == movimento.jog and gamestate.tabuleiro[movimento.yf][movimento.xf] == 0 and adjacente(2):
-        movimento.tipo = 1
+    if gamestate.tabuleiro[classe.yi][classe.xi] == movimento.jog and gamestate.tabuleiro[classe.yf][classe.xf] == 0 and adjacente(2, classe):
+        classe.tipo = 1
         return True
 
 # This function takes an input for the type of game the player wants to play
@@ -246,25 +247,10 @@ def jogadas_validas_pos(jog, yi, xi, screen):
                 movimento.xi = xi
                 movimento.yf = k
                 movimento.xf = l
-                if movimento_valido():
+                if movimento_valido(movimento):
                     assinala_quad(k, l, screen)
 
 # Checks the amount of valid moves a player has
-
-
-def movimento_teste():
-    if abs(totalmov.yf - totalmov.yi) == 2 and abs(totalmov.xf - totalmov.xi) == 1 or abs(totalmov.xf - totalmov.xi) == 2 and abs(totalmov.yf - totalmov.yi) == 1:
-        return False
-    if not dentro(totalmov.xi, totalmov.yi) or not dentro(totalmov.xf, totalmov.yf):
-        return False
-    if gamestate.tabuleiro[totalmov.yi][totalmov.xi] == movimento.jog and gamestate.tabuleiro[totalmov.yf][totalmov.xf] == 0 and (adjacente_teste(1) or adjacente_teste(2)):
-        return True
-
-
-def adjacente_teste(dist):
-    return(
-        abs(totalmov.xi - totalmov.xf) == dist and abs(totalmov.yi - totalmov.yf) <= dist or
-        abs(totalmov.yi - totalmov.yf) == dist and abs(totalmov.xi - totalmov.xf) <= dist)
 
 
 def jogadas_validas_total(jog):
@@ -279,7 +265,7 @@ def jogadas_validas_total(jog):
                         totalmov.xi = x
                         totalmov.yf = k
                         totalmov.xf = l
-                        if movimento_teste():
+                        if movimento_valido(totalmov):
                             nmovs += 1
     return nmovs
 
@@ -376,7 +362,7 @@ def jogada_PC():
                         movimento.xi = xi
                         movimento.yf = l
                         movimento.xf = k
-                        if movimento_valido():
+                        if movimento_valido(movimento):
                             copia()
                             executa_movimento()
                             av = avalia()
@@ -391,7 +377,7 @@ def jogada_PC():
     movimento.xi = bestmov.xi
     movimento.yf = bestmov.yf
     movimento.xf = bestmov.xf
-    if movimento_valido():
+    if movimento_valido(movimento):
         executa_movimento()
 
 # Main function, executes:
@@ -405,8 +391,8 @@ def main():
     fim = 0
     movimento.jog = 1
     tipo = int(tipo_jogo())
-    tabuleiro = escolhetabul()
-    letabul(tabuleiro)
+    tabuleiro = escolhe_tabul()
+    carrega_tabul(tabuleiro)
     screen = pygame.display.set_mode((SIZE, SIZE))
     clock = pygame.time.Clock()
     screen.fill((0, 0, 0))
@@ -424,7 +410,7 @@ def main():
     while running:
 
         if jogadas_validas_total(movimento.jog) == 0:
-            movimento.jog = outroJog(movimento.jog)
+            movimento.jog = troca_jog(movimento.jog)
 
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
@@ -457,13 +443,13 @@ def main():
                         elif cl == 1:
                             jogada_Humano(cl, xi, yi, screen)
                             cl = 0
-                            if movimento_valido():
+                            if movimento_valido(movimento):
                                 executa_movimento()
 
                                 # After a move is made, we increase the number of plays made, changing the player
 
                                 gamestate.nMovs += 1
-                                movimento.jog = outroJog(movimento.jog)
+                                movimento.jog = troca_jog(movimento.jog)
 
                                 # After each move, we update the screen with the updated board state
 
@@ -476,10 +462,10 @@ def main():
                         elif cl == 1:
                             jogada_Humano(cl, xi, yi, screen)
                             cl = 0
-                            if movimento_valido():
+                            if movimento_valido(movimento):
                                 executa_movimento()
                                 gamestate.nMovs += 1
-                                movimento.jog = outroJog(movimento.jog)
+                                movimento.jog = troca_jog(movimento.jog)
                             mostra_tabul(screen)
             try:
                 pygame.display.flip()
@@ -492,14 +478,14 @@ def main():
             jogada_PC()
             gamestate.nMovs += 1
             mostra_tabul(screen)
-            movimento.jog = outroJog(movimento.jog)
+            movimento.jog = troca_jog(movimento.jog)
             time.sleep(1)
             pygame.display.flip()
         if tipo == 3:
             jogada_PC()
             gamestate.nMovs += 1
             mostra_tabul(screen)
-            movimento.jog = outroJog(movimento.jog)
+            movimento.jog = troca_jog(movimento.jog)
             time.sleep(1)
             pygame.display.flip()
 
