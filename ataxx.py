@@ -336,7 +336,7 @@ def finaliza(tipo, fim):
 
 
 def jogada_Humano(cl, px, py, screen):
-    if cl == 0 and gamestate.tabuleiro[py][px] == movimento.jog:
+    if cl == 0:
         movimento.xi = px
         movimento.yi = py
         assinala_quad(py, px, screen)
@@ -437,7 +437,7 @@ def main():
                     # Type 2 second click: PC Play
 
                     if tipo <= 2:
-                        if cl == 0:
+                        if cl == 0 and gamestate.tabuleiro[yi][xi] == movimento.jog:
                             jogada_Humano(cl, xi, yi, screen)
                             cl = 1
                         elif cl == 1:
@@ -456,7 +456,7 @@ def main():
                             mostra_tabul(screen)
                 else:
                     if tipo == 1:
-                        if cl == 0:
+                        if cl == 0 and gamestate.tabuleiro[yi][xi] == movimento.jog:
                             jogada_Humano(cl, xi, yi, screen)
                             cl = 1
                         elif cl == 1:
