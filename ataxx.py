@@ -28,6 +28,7 @@ class gamestate:
     tipo = unsignedinteger
     ai1diff = unsignedinteger
     ai2diff = unsignedinteger
+    rec = 0
     nMovs = 1
     vencedor = 0
 
@@ -443,8 +444,57 @@ def algo_centercontrol():
     return score
 
 def algo_minmax():
-    # WIP
-    return 0
+    gamestate.rec = 0
+    score = max_value(-10000, 10000)
+    return score
+
+def max_value(alfa, beta):
+    gamestate.rec += 1
+    if fim_jogo() == -1 or gamestate.rec == 10:
+        return
+    v = -10000
+    for yi in range(gamestate.N):
+        for xi in range(gamestate.N):
+            if gamestate.tabuleiro[yi][xi] == movimento.jog:
+                for k in range(0, gamestate.N):
+                    for l in range(0, gamestate.N):
+                        lastmov.yi = yi
+                        lastmov.xi = xi
+                        lastmov.yf = l
+                        lastmov.xf = k
+                        v = max(v, min_value(alfa, beta))
+                        if v >= beta:
+                            return v
+                        alfa = max(alfa, v)
+    return v
+
+
+def min_value(alfa, beta):
+    gamestate.rec += 1
+    if fim_jogo() == -1 or gamestate.rec == 10:
+        return
+    v = 10000
+    for yi in range(gamestate.N):
+        for xi in range(gamestate.N):
+            if gamestate.tabuleiro[yi][xi] == troca_jog(movimento.jog):
+                for k in range(0, gamestate.N):
+                    for l in range(0, gamestate.N):
+                        lastmov.yi = yi
+                        lastmov.xi = xi
+                        lastmov.yf = l
+                        lastmov.xf = k
+                        v = max(v, max_value(alfa, beta))
+                        if v <= beta:
+                            return v
+                        beta = min(beta, v)
+    return v
+
+
+class lastmov():
+    xi = 0
+    yi = 0
+    yf = 0
+    xf = 0
 
 
 # The type and board selection functions;
