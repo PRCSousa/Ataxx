@@ -1,9 +1,11 @@
 # Importamos as librarias:
+# Numpy: We just imported the unsignedinterger to create a integer without value
 # Pygame: Handles the UI and the game interactions
 # Time: This lib is used to create time intervals in the code
 # Copy: Used to copy and restore the game state, explained why in the future comments
 # Random: This lib generates pseudo-random values to enhance the PC human-like behaviour
 
+from numpy import unsignedinteger
 import pygame
 import time
 import copy
@@ -20,9 +22,12 @@ SIZE = 600
 # Class that saves the gamestate, like the size of the board (N), the square size (dynamic to the window size), and the board setup
 
 class gamestate:
-    N = 1
-    sq = SIZE / N
+    N = unsignedinteger
+    sq = unsignedinteger
     tabuleiro = []
+    tipo = unsignedinteger
+    ai1diff = unsignedinteger
+    ai2diff = unsignedinteger
     nMovs = 1
     vencedor = 0
 
@@ -90,6 +95,32 @@ def carrega_tabul(ficheiro):
         tabuleiro.append(list(map(int, f.readline().split())))
     f.close()
     gamestate.tabuleiro = tabuleiro
+
+
+def dificuldade():
+    if gamestate.tipo == 1:
+        return
+    elif gamestate.tipo == 2:
+        print("Dificuldade:")
+        print("1) Fácil")
+        print("2) Médio")
+        print("3) Difícil")
+        gamestate.ai1diff = input()
+        return
+    else:
+        print("Algoritmo da AI 1:")
+        print("1) Random")
+        print("2) Greedy")
+        print("3) Minmax")
+        print("4) Center Control")
+        gamestate.ai1diff = int(input())
+        print("Algoritmo da AI 2:")
+        print("1) Random")
+        print("2) Greedy")
+        print("3) Minmax")
+        print("4) Center Control")
+        gamestate.ai2diff = int(input())
+        return
 
 
 # The next 2 functions save the gamestate and restores it when called, respectively
@@ -359,7 +390,10 @@ def jogada_PC():
                         if movimento_valido(movimento):
                             copia()
                             executa_movimento()
-                            av = avalia()
+                            if gamestate.nMovs % 2 != 1:
+                                av = avalia(gamestate.ai1diff)
+                            else:
+                                av = avalia(gamestate.ai2diff)
                             restaura()
                             if av >= bestav:
                                 bestav = av
@@ -375,14 +409,44 @@ def jogada_PC():
         executa_movimento()
 
 
-# Evaluation function, the computer decides it move by the heuristic placed here
+# Evaluation functions, the computer decides it move by the heuristic placed here
 
-def avalia():
+def avalia(tipo):
+    tipo = int(tipo)
+    score = 0
+    if tipo == 1:
+        score = algo_random()
+    elif tipo == 2:
+        score = algo_greedy()
+    elif tipo == 3:
+        score = algo_centercontrol()
+    elif tipo == 4:
+        score = algo_minmax()
+    elif tipo > 4:
+        score = random.random()
+    return score
+
+
+def algo_random():
+    return (random.randint(1, 10))
+
+
+def algo_greedy():
     salt = random.random()
     return (conta_pecas(movimento.jog) - conta_pecas(troca_jog(movimento.jog))+salt)
 
+def algo_centercontrol():
+    salt = random.random()
+    yc = abs(gamestate.N / 2 - movimento.yf)
+    xc = abs(gamestate.N / 2 - movimento. xf)
+    score = 100 - (yc + xc) + 2*conta_pecas(movimento.jog) + salt
+    return score
 
-# Main function, executes:
+def algo_minmax():
+    # WIP
+    return 0
+
+
 # The type and board selection functions;
 # Generates the window and the board
 #  Begins the loop that sets the game playing
@@ -391,7 +455,8 @@ def main():
     cl = 0
     fim = 0
     movimento.jog = 1
-    tipo = int(tipo_jogo())
+    gamestate.tipo = int(tipo_jogo())
+    dificuldade()
     tabuleiro = escolhe_tabul()
     carrega_tabul(tabuleiro)
     screen = pygame.display.set_mode((SIZE, SIZE))
@@ -437,7 +502,7 @@ def main():
                     # Type 1 second click: Human Play
                     # Type 2 second click: PC Play
 
-                    if tipo <= 2:
+                    if gamestate.tipo <= 2:
                         if cl == 0 and gamestate.tabuleiro[yi][xi] == movimento.jog:
                             jogada_Humano(cl, xi, yi, screen)
                             cl = 1
@@ -456,7 +521,7 @@ def main():
 
                             mostra_tabul(screen)
                 else:
-                    if tipo == 1:
+                    if gamestate.tipo == 1:
                         if cl == 0 and gamestate.tabuleiro[yi][xi] == movimento.jog:
                             jogada_Humano(cl, xi, yi, screen)
                             cl = 1
@@ -475,14 +540,14 @@ def main():
 
         # Computer's turn
 
-        if gamestate.nMovs % 2 != 1 and tipo >= 2:
+        if gamestate.nMovs % 2 != 1 and gamestate.tipo >= 2:
             jogada_PC()
             gamestate.nMovs += 1
             mostra_tabul(screen)
             movimento.jog = troca_jog(movimento.jog)
             time.sleep(1)
             pygame.display.flip()
-        if tipo == 3:
+        if gamestate.tipo == 3:
             jogada_PC()
             gamestate.nMovs += 1
             mostra_tabul(screen)
@@ -499,7 +564,7 @@ def main():
         if fim == -1:
             print("Jogador Vermelho:", conta_pecas(1))
             print("Jogador Azul:", conta_pecas(2))
-            finaliza(tipo, fim)
+            finaliza(gamestate.tipo, fim)
             time.sleep(3)
             pygame.quit()
             running = False
