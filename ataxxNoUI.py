@@ -1,18 +1,8 @@
-# Importamos as librarias:
-# Numpy: We just imported the unsignedinterger to create a integer without value
-# Pygame: Handles the UI and the game interactions
-# Copy: Used to copy and restore the game state, explained why in the future comments
-# Random: This lib generates pseudo-random values to enhance the PC human-like behaviour
-
 import numpy
-import pygame
 import copy
 import random
 
 SIZE = 600
-
-
-# Class that saves the gamestate, like the size of the board (N), the square size (dynamic to the window size), and the board setup
 
 class gamestate:
     N = numpy.unsignedinteger
@@ -24,9 +14,6 @@ class gamestate:
     nMovs = 1
     vencedor = 0
 
-
-# This class saves the movement data (initial and final x and y's, the player moving, the game type and the winner)
-
 class movimento:
     xi = 0
     yi = 0
@@ -35,11 +22,6 @@ class movimento:
     jog = 0
     tipo = 0
 
-
-# These classes sre temporary data savers:
-# The first one is used just to test if said move is possible
-# The second one saves the best move the computer can play
-
 class totalmov:
     xi = 0
     yi = 0
@@ -47,21 +29,14 @@ class totalmov:
     xf = 0
     tipo = 0
 
-
 class bestmov:
     xi = 0
     yi = 0
     yf = 0
     xf = 0
 
-
-# This class solely saves the game before the computer move, so it can restore it after every try
-
 class save:
     game = []
-
-
-# Function to read the chosen board by the player
 
 def escolhe_tabul():
     print("Tabuleiros:")
@@ -76,9 +51,6 @@ def escolhe_tabul():
     tabuleiro = "tabuleiros/tab"+numtabul+".txt"
     return tabuleiro
 
-
-# Function to, after the player has chosen the board, loads it into the gamestate class
-
 def carrega_tabul(ficheiro):
     f = open(ficheiro)
     gamestate.N = int(f.readline())
@@ -88,7 +60,6 @@ def carrega_tabul(ficheiro):
         tabuleiro.append(list(map(int, f.readline().split())))
     f.close()
     gamestate.tabuleiro = tabuleiro
-
 
 def dificuldade():
     if gamestate.tipo == 1:
@@ -115,9 +86,6 @@ def dificuldade():
         gamestate.ai2diff = int(input())
         return
 
-
-# The next 2 functions save the gamestate and restores it when called, respectively
-
 def copia():
     save.game = copy.deepcopy(gamestate.tabuleiro)
 
@@ -125,18 +93,11 @@ def copia():
 def restaura():
     gamestate.tabuleiro = save.game
 
-
-# This function changes the player turn
-
 def troca_jog(jog):
     if jog == 1:
         return 2
     else:
         return 1
-
-
-# This function deals with taking of the opponent pieces, after a movement is done, any adjacent pieces are swapped
-# Note: Every if in the try...except is to stop taking from across the board because tabuleiro[-1] = tabuleiro[N]
 
 def comer():
     dx = -1
@@ -164,33 +125,19 @@ def comer():
                 pass
         dy = -1
 
-
-# This function simply executes the movement, if the movement type is jumping,
-# it also removes the piece from its old location, and then checks for piece taking
-
 def executa_movimento():
     gamestate.tabuleiro[movimento.yf][movimento.xf] = movimento.jog
     if movimento.tipo == 1:
         gamestate.tabuleiro[movimento.yi][movimento.xi] = 0
     comer()
 
-
-# Checks if the movement choice is either a jump or a multiplication
-
 def adjacente(dist, classe):
     return(
         abs(classe.xi - classe.xf) == dist and abs(classe.yi - classe.yf) <= dist or
         abs(classe.yi - classe.yf) == dist and abs(classe.xi - classe.xf) <= dist)
 
-
-# Checks if the move is inside the board limits
-
 def dentro(x, y):
     return (x >= 0 and x <= gamestate.N-1 and y >= 0 and y <= gamestate.N-1)
-
-
-# Using the last 2 functions, this one checks if the move is totally valid
-# Note: the first if removes the L like movement
 
 def movimento_valido(classe):
     if abs(classe.yf - classe.yi) == 2 and abs(classe.xf - classe.xi) == 1 or abs(classe.xf - classe.xi) == 2 and abs(classe.yf - classe.yi) == 1:
@@ -204,9 +151,6 @@ def movimento_valido(classe):
         classe.tipo = 1
         return True
 
-
-# This function takes an input for the type of game the player wants to play
-
 def tipo_jogo():
     print("Jogo de Ataxx")
     print("Escolha o modo de jogo:")
@@ -215,12 +159,6 @@ def tipo_jogo():
     print("3 - Computador vs. Computador ")
     tipo = input()
     return tipo
-
-
-# This function takes the square we clicked and, if it has a piece we can move,
-# it checks all the possible moves and selects them
-
-# Checks the amount of valid moves a player has
 
 def jogadas_validas_total(jog):
     nmovs = 0
@@ -238,9 +176,6 @@ def jogadas_validas_total(jog):
                             nmovs += 1
     return nmovs
 
-
-# Function that counts the amount of pieces the called player has
-
 def conta_pecas(jog):
     pecas = 0
     for i in range(gamestate.N):
@@ -249,9 +184,6 @@ def conta_pecas(jog):
                 pecas += 1
     return pecas
 
-
-# Function that returns the amount of empty squares
-
 def quad_validos():
     nmovs = 0
     for i in range(gamestate.N):
@@ -259,10 +191,6 @@ def quad_validos():
             if gamestate.tabuleiro[i][j] == 0:
                 nmovs += 1
     return nmovs
-
-
-# Checks if the game has reached its end conditions, depending on which one it is,
-# it set the winner as one of the players or as a draw
 
 def fim_jogo():
     n = quad_validos()
@@ -286,9 +214,6 @@ def fim_jogo():
     else:
         return 0
 
-
-# If one of the ending conditions has been reached, it prints who won
-
 def finaliza():
     if gamestate.vencedor != 0:
         if gamestate.vencedor == -1:
@@ -298,11 +223,6 @@ def finaliza():
     else:
         resultados.empate += 1
     resultados.jogadas.append(gamestate.nMovs)
-
-# Manages the computer made movements:
-# For each piece it has, it tries every possivle move, by doing it, evaluating it, and restoring the game to before the move
-# for each evaluation, it saves the movement with the best evaluation score and then, after every move has been played
-# it does said best move
 
 def jogada_PC():
     bestav = -1000
@@ -336,9 +256,6 @@ def jogada_PC():
     if movimento_valido(movimento):
         executa_movimento()
 
-
-# Evaluation functions, the computer decides it move by the heuristic placed here
-
 def avalia(tipo):
     tipo = int(tipo)
     score = 0
@@ -354,10 +271,8 @@ def avalia(tipo):
         score = random.random()
     return score
 
-
 def algo_random():
     return (random.randint(1, 10))
-
 
 def algo_greedy():
     salt = random.random()
@@ -374,23 +289,12 @@ def algo_minmax():
     # WIP
     return 0
 
-
-# The type and board selection functions;
-# Generates the window and the board
-#  Begins the loop that sets the game playing
-
 def main():
     cl = 0
     fim = 0
     movimento.jog = 1
     carrega_tabul(tabuleiro)
     running = True
-
-    # While the game plays, it checks for events:
-    # If the next player has no moves left, it skips his turn
-    # If the X is pressed, the game exits
-    # If a click is made, it begins a chain of events explained next
-    # It constatnly checks if the game has reached any end condition, and if it has, it finalizes it
 
     while running:
 
@@ -412,8 +316,6 @@ def main():
             finaliza()
             running = False
 
-
-
 class resultados:
     vermelho = 0
     azul = 0
@@ -422,10 +324,8 @@ class resultados:
     diff = []
     media = 0
 
-
 def calculos():
     resultados.media = numpy.median(resultados.diff)
-
 
 tabuleiro = escolhe_tabul()
 carrega_tabul(tabuleiro)
