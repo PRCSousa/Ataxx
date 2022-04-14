@@ -5,6 +5,7 @@
 # Copy: Used to copy and restore the game state, explained why in the future comments
 # Random: This lib generates pseudo-random values to enhance the PC human-like behaviour
 
+from audioop import minmax
 from numpy import unsignedinteger
 import pygame
 import time
@@ -55,8 +56,13 @@ class totalmov:
     xf = 0
     tipo = 0
 
-
 class bestmov:
+    xi = 0
+    yi = 0
+    yf = 0
+    xf = 0
+
+class minmaxmov():
     xi = 0
     yi = 0
     yf = 0
@@ -422,15 +428,15 @@ def avalia(tipo):
     elif tipo == 3:
         score = algo_centercontrol()
     elif tipo == 4:
-        score = algo_minmax()
+        alfa = -100000
+        beta =  100000
+        score = algo_minmax(0, True, alfa, beta)
     elif tipo > 4:
         score = random.random()
     return score
 
-
 def algo_random():
     return (random.randint(1, 10))
-
 
 def algo_greedy():
     salt = random.random()
@@ -443,58 +449,59 @@ def algo_centercontrol():
     score = 100 - (yc + xc) + 2*conta_pecas(movimento.jog) + salt
     return score
 
-def algo_minmax():
-    gamestate.rec = 0
-    score = max_value(-10000, 10000)
-    return score
+def algo_minmax(depth, minimizer, alfa, beta):
+    op = troca_jog(movimento.jog)
+    f = open("logs.txt", "a")
+    f.write("Teste!\n")
+    minmaxboard = []
+    if depth == 10 or fim_jogo == -1:
+        return algo_greedy()
+    
+    if minimizer:
+        value = +1000
+        for yi in range(gamestate.N):
+            for xi in range(gamestate.N):
+                if gamestate.tabuleiro[yi][xi] == op:
+                    minmaxmov.yi = yi
+                    minmaxmov.xi = xi
+                    for yf in range(0, gamestate.N):
+                        for xf in range(0, gamestate.N):
+                            minmaxmov.yf = yf
+                            minmaxmov.xf = xf
+                            if movimento_valido(minmaxmov):
+                                temp = copy.deepcopy(gamestate.tabuleiro)
+                                minmaxboard.append(temp)
+                                executa_movimento(minmaxmov)
+                                evaluation = algo_minmax(depth +1, False, alfa, beta)
+                                value = min(value, evaluation)
+                                beta = min(beta, evaluation)
+                                if beta <= alfa:
+                                    break
+                                gamestate.tabuleiro = minmaxboard[depth]
+        return value
 
-def max_value(alfa, beta):
-    gamestate.rec += 1
-    if fim_jogo() == -1 or gamestate.rec == 10:
-        return
-    v = -10000
+    value = -1000
     for yi in range(gamestate.N):
         for xi in range(gamestate.N):
             if gamestate.tabuleiro[yi][xi] == movimento.jog:
-                for k in range(0, gamestate.N):
-                    for l in range(0, gamestate.N):
-                        lastmov.yi = yi
-                        lastmov.xi = xi
-                        lastmov.yf = l
-                        lastmov.xf = k
-                        v = max(v, min_value(alfa, beta))
-                        if v >= beta:
-                            return v
-                        alfa = max(alfa, v)
-    return v
+                for yf in range(0, gamestate.N):
+                    for xf in range(0, gamestate.N):
+                        minmaxmov.yi = yi
+                        minmaxmov.xi = xi
+                        minmaxmov.yf = yf
+                        minmaxmov.xf = xf
+                        if movimento_valido(minmaxmov):
+                            temp = copy.deepcopy(gamestate.tabuleiro)
+                            minmaxboard.append(temp)
+                            executa_movimento(minmaxmov)
+                            evaluation = algo_minmax(depth +1, False, alfa, beta)
+                            value = max(value, evaluation)
+                            alfa = max(alfa, evaluation)
+                            if beta <= alfa:
+                                break
+                            gamestate.tabuleiro = minmaxboard[depth]
+    return value
 
-
-def min_value(alfa, beta):
-    gamestate.rec += 1
-    if fim_jogo() == -1 or gamestate.rec == 10:
-        return
-    v = 10000
-    for yi in range(gamestate.N):
-        for xi in range(gamestate.N):
-            if gamestate.tabuleiro[yi][xi] == troca_jog(movimento.jog):
-                for k in range(0, gamestate.N):
-                    for l in range(0, gamestate.N):
-                        lastmov.yi = yi
-                        lastmov.xi = xi
-                        lastmov.yf = l
-                        lastmov.xf = k
-                        v = max(v, max_value(alfa, beta))
-                        if v <= beta:
-                            return v
-                        beta = min(beta, v)
-    return v
-
-
-class lastmov():
-    xi = 0
-    yi = 0
-    yf = 0
-    xf = 0
 
 
 # The type and board selection functions;
