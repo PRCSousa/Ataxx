@@ -75,14 +75,14 @@ def dificuldade():
         print("Algoritmo da AI 1:")
         print("1) Random")
         print("2) Greedy")
-        print("3) Minmax")
-        print("4) Center Control")
+        print("3) Center Control")
+        print("4) Minmax")
         gamestate.ai1diff = int(input())
         print("Algoritmo da AI 2:")
         print("1) Random")
         print("2) Greedy")
-        print("3) Minmax")
-        print("4) Center Control")
+        print("3) Center Control")
+        print("4) Minmax")
         gamestate.ai2diff = int(input())
         return
 

@@ -103,23 +103,23 @@ def dificuldade():
         return
     elif gamestate.tipo == 2:
         print("Dificuldade:")
-        print("1) Fácil")
-        print("2) Médio")
-        print("3) Difícil")
+        print("1) Fácil (Random)")
+        print("2) Médio (Greedy)")
+        print("3) Difícil (Center)")
         gamestate.ai1diff = input()
         return
     else:
         print("Algoritmo da AI 1:")
         print("1) Random")
         print("2) Greedy")
-        print("3) Minmax")
-        print("4) Center Control")
+        print("3) Center Control")
+        print("4) Minmax")
         gamestate.ai1diff = int(input())
         print("Algoritmo da AI 2:")
         print("1) Random")
         print("2) Greedy")
-        print("3) Minmax")
-        print("4) Center Control")
+        print("3) Center Control")
+        print("4) Minmax")
         gamestate.ai2diff = int(input())
         return
 
