@@ -334,6 +334,7 @@ dificuldade()
 total = int(input("Quantos testes quer realizar?: "))
 
 for i in range(total):
+    print("Teste", i, "realizado.")
     main()
 
 calculos()
