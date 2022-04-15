@@ -70,16 +70,6 @@ def carrega_tabul(ficheiro):
     gamestate.tabuleiro = tabuleiro
 
 def dificuldade():
-    if gamestate.tipo == 1:
-        return
-    elif gamestate.tipo == 2:
-        print("Dificuldade:")
-        print("1) Fácil")
-        print("2) Médio")
-        print("3) Difícil")
-        gamestate.ai1diff = input()
-        return
-    else:
         print("Algoritmo da AI 1:")
         print("1) Random")
         print("2) Greedy")
@@ -264,9 +254,6 @@ def jogada_PC():
     if movimento_valido(movimento):
         executa_movimento()
 
-
-# Evaluation functions, the computer decides it move by the heuristic placed here
-
 def avalia(tipo):
     tipo = int(tipo)
     score = 0
@@ -365,10 +352,7 @@ def algo_minmax(depth, minimizer, alfa, beta):
         movimento.jog = minmaxmov.min                  
         return value
 
-
-
 def main():
-    cl = 0
     fim = 0
     movimento.jog = 1
     carrega_tabul(tabuleiro)
@@ -377,13 +361,14 @@ def main():
     while running:
 
         if jogadas_validas_total(movimento.jog) == 0:
+            gamestate.nMovs += 1
             movimento.jog = troca_jog(movimento.jog)
 
-        if gamestate.nMovs % 2 != 1 and gamestate.tipo >= 2:
+        if gamestate.nMovs % 2 != 1:
             jogada_PC()
             gamestate.nMovs += 1
             movimento.jog = troca_jog(movimento.jog)
-        if gamestate.tipo == 3:
+        else:
             jogada_PC()
             gamestate.nMovs += 1
             movimento.jog = troca_jog(movimento.jog)
@@ -414,10 +399,6 @@ total = int(input("Quantos testes quer realizar?: "))
 for i in range(total):
     main()
     print("Teste", i + 1, "realizado.")
-    print("Vitórias do Vermelho: ",     resultados.vermelho)
-    print("Vitórias do Azul: ",         resultados.azul)
-    print("Empates: ",                  resultados.empate)
-    print("Diferença de peças média: ", resultados.media)
 
 calculos()
 
