@@ -35,6 +35,14 @@ class bestmov:
     yf = 0
     xf = 0
 
+class minmaxmov():
+    xi = 0
+    yi = 0
+    yf = 0
+    xf = 0
+    min = 0
+    max = 0
+
 class save:
     game = []
 
@@ -239,9 +247,9 @@ def jogada_PC():
                             copia()
                             executa_movimento()
                             if gamestate.nMovs % 2 != 1:
-                                av = avalia(gamestate.ai1diff)
-                            else:
                                 av = avalia(gamestate.ai2diff)
+                            else:
+                                av = avalia(gamestate.ai1diff)
                             restaura()
                             if av >= bestav:
                                 bestav = av
@@ -256,6 +264,9 @@ def jogada_PC():
     if movimento_valido(movimento):
         executa_movimento()
 
+
+# Evaluation functions, the computer decides it move by the heuristic placed here
+
 def avalia(tipo):
     tipo = int(tipo)
     score = 0
@@ -266,7 +277,25 @@ def avalia(tipo):
     elif tipo == 3:
         score = algo_centercontrol()
     elif tipo == 4:
-        score = algo_minmax()
+        if gamestate.nMovs % 2 != 1:
+            movimento.jog = 1
+            minmaxmov.min = 1
+            minmaxmov.max = 2
+        else: 
+            movimento.jog = 2
+            minmaxmov.min = 2
+            minmaxmov.max = 1
+        minmaxmov.yi = movimento.yi
+        minmaxmov.xi = movimento.xi
+        minmaxmov.yf = movimento.yf
+        minmaxmov.xf = movimento.xf
+        alfa = -100000
+        beta =  100000
+        score = algo_minmax(0, True, alfa, beta)
+        movimento.yi = minmaxmov.yi
+        movimento.xi = minmaxmov.xi
+        movimento.yf = minmaxmov.yf
+        movimento.xf = minmaxmov.xf
     elif tipo > 4:
         score = random.random()
     return score
@@ -285,9 +314,58 @@ def algo_centercontrol():
     score = 100 - (yc + xc) + 2*conta_pecas(movimento.jog) + salt
     return score
 
-def algo_minmax():
-    # WIP
-    return 0
+def algo_minmax(depth, minimizer, alfa, beta):       
+    if depth == 3 or fim_jogo == -1:
+        return (algo_greedy() * (-1))
+    
+    if minimizer:
+        movimento.jog = minmaxmov.min
+        value = +1000
+        for yi in range(gamestate.N):
+            for xi in range(gamestate.N):
+                if gamestate.tabuleiro[yi][xi] == movimento.jog:
+                    for k in range(0, gamestate.N):
+                        for l in range(0, gamestate.N):
+                            movimento.yi = yi
+                            movimento.xi = xi
+                            movimento.yf = l
+                            movimento.xf = k
+                            if movimento_valido(movimento):
+                                temp = copy.deepcopy(gamestate.tabuleiro)
+                                executa_movimento()
+                                evaluation = algo_minmax(depth +1, False, alfa, beta)
+                                gamestate.tabuleiro = temp
+                                value = min(value, evaluation)
+                                beta = min(beta, evaluation)
+                                if beta <= alfa:
+                                    break
+        movimento.jog = minmaxmov.max                           
+        return value
+    else:
+        movimento.jog = minmaxmov.max 
+        value = -1000
+        for yi in range(gamestate.N):
+            for xi in range(gamestate.N):
+                if gamestate.tabuleiro[yi][xi] == movimento.jog:
+                    for k in range(0, gamestate.N):
+                        for l in range(0, gamestate.N):
+                            movimento.yi = yi
+                            movimento.xi = xi
+                            movimento.yf = l
+                            movimento.xf = k
+                            if movimento_valido(movimento):
+                                temp = copy.deepcopy(gamestate.tabuleiro)
+                                executa_movimento()
+                                evaluation = algo_minmax(depth +1, True, alfa, beta)
+                                gamestate.tabuleiro = temp
+                                value = max(value, evaluation)
+                                alfa = max(alfa, evaluation)
+                                if beta <= alfa:
+                                    break
+        movimento.jog = minmaxmov.min                  
+        return value
+
+
 
 def main():
     cl = 0
@@ -334,8 +412,12 @@ dificuldade()
 total = int(input("Quantos testes quer realizar?: "))
 
 for i in range(total):
-    print("Teste", i, "realizado.")
     main()
+    print("Teste", i + 1, "realizado.")
+    print("Vitórias do Vermelho: ",     resultados.vermelho)
+    print("Vitórias do Azul: ",         resultados.azul)
+    print("Empates: ",                  resultados.empate)
+    print("Diferença de peças média: ", resultados.media)
 
 calculos()
 
