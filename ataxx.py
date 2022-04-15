@@ -620,6 +620,8 @@ def main():
 
                             mostra_tabul(screen)
                 else:
+                    if jogadas_validas_total(movimento.jog) == 0:
+                        movimento.jog = troca_jog(movimento.jog)
                     if gamestate.tipo == 1:
                         if cl == 0 and gamestate.tabuleiro[yi][xi] == movimento.jog:
                             jogada_Humano(cl, xi, yi, screen)
