@@ -112,7 +112,7 @@ def dificuldade():
         print("1) Fácil (Random)")
         print("2) Médio (Greedy)")
         print("3) Difícil (Center)")
-        gamestate.ai1diff = input()
+        gamestate.ai2diff = input()
         return
     else:
         print("Algoritmo da AI 1:")
@@ -210,6 +210,32 @@ def comer():
                 elif gamestate.tabuleiro[movimento.yf + dy][movimento.xf + dx] == troca_jog(movimento.jog):
                     gamestate.tabuleiro[movimento.yf +
                                         dy][movimento.xf + dx] = movimento.jog
+            except IndexError:
+                pass
+        dy = -1
+
+def undo_comer():
+    dx = -1
+    dy = -1
+    for dx in range(dx, 2):
+        for dy in range(dy, 2):
+            try:
+                if movimento.yf + dy == -1 and movimento.xf + dx == -1:
+                    if gamestate.tabuleiro[0][0] == movimento.jog:
+                        gamestate.tabuleiro[movimento.yf + dy +
+                                            1][movimento.xf + dx+1] = troca_jog(movimento.jog)
+                elif movimento.yf + dy == -1:
+                    if gamestate.tabuleiro[0][movimento.xf + dx] == movimento.jog:
+                        gamestate.tabuleiro[movimento.yf + dy +
+                                            1][movimento.xf + dx] = troca_jog(movimento.jog)
+                elif movimento.xf + dx == -1:
+                    if gamestate.tabuleiro[movimento.yf + dy][0] == movimento.jog:
+                        gamestate.tabuleiro[movimento.yf + dy][movimento.xf +
+                                                               dx+1] = troca_jog(movimento.jog)
+
+                elif gamestate.tabuleiro[movimento.yf + dy][movimento.xf + dx] == movimento.jog:
+                    gamestate.tabuleiro[movimento.yf +
+                                        dy][movimento.xf + dx] = troca_jog(movimento.jog)
             except IndexError:
                 pass
         dy = -1
@@ -398,9 +424,10 @@ def jogada_PC():
                             copia()
                             executa_movimento()
                             if gamestate.nMovs % 2 != 1:
-                                av = avalia(gamestate.ai1diff)
-                            else:
+                                movimento.jog = 1
                                 av = avalia(gamestate.ai2diff)
+                            else:
+                                av = avalia(gamestate.ai1diff)
                             restaura()
                             if av >= bestav:
                                 bestav = av
@@ -428,9 +455,23 @@ def avalia(tipo):
     elif tipo == 3:
         score = algo_centercontrol()
     elif tipo == 4:
+        # mov = ("Inicial:",movimento.yi,movimento.xi,"Final:",movimento.yf,movimento.xf)
+        # f = open("logs.txt", "a")
+        # f.write("\n")
+        # f.write(str(mov))
+        # f.write("\n")
+        # f.write("\n")
+        minmaxmov.yi = movimento.yi
+        minmaxmov.xi = movimento.xi
+        minmaxmov.yf = movimento.yf
+        minmaxmov.xf = movimento.xf
         alfa = -100000
         beta =  100000
         score = algo_minmax(0, True, alfa, beta)
+        movimento.yi = minmaxmov.yi
+        movimento.xi = minmaxmov.xi
+        movimento.yf = minmaxmov.yf
+        movimento.xf = minmaxmov.xf
     elif tipo > 4:
         score = random.random()
     return score
@@ -449,58 +490,138 @@ def algo_centercontrol():
     score = 100 - (yc + xc) + 2*conta_pecas(movimento.jog) + salt
     return score
 
-def algo_minmax(depth, minimizer, alfa, beta):
-    op = troca_jog(movimento.jog)
-    f = open("logs.txt", "a")
-    f.write("Teste!\n")
-    minmaxboard = []
-    if depth == 10 or fim_jogo == -1:
-        return algo_greedy()
+def algo_minmax(depth, minimizer, alfa, beta):       
+    if depth == 3 or fim_jogo == -1:
+        # f = open("logs.txt", "a")
+        # f.write("\n")
+        # f.write(str(gamestate.tabuleiro[0]))
+        # f.write("\n")
+        # f.write(str(gamestate.tabuleiro[1]))
+        # f.write("\n")
+        # f.write(str(gamestate.tabuleiro[2]))
+        # f.write("\n")
+        # f.write(str(gamestate.tabuleiro[3]))
+        # f.write("\n")
+        # f.write(str(gamestate.tabuleiro[4]))
+        # f.write("\n")
+        # f.write(str(gamestate.tabuleiro[5]))
+        # f.write("\n")
+        # f.write(str(gamestate.tabuleiro[6]))
+        # f.write("\n")
+        # f.write("\n")
+        # g = ("Pontos: ", algo_greedy() )
+        # f.write(str(g))
+        # f.write("\n")
+        # f.write("\n")
+        return (algo_greedy() * (-1))
     
     if minimizer:
+        movimento.jog = 1
         value = +1000
         for yi in range(gamestate.N):
             for xi in range(gamestate.N):
-                if gamestate.tabuleiro[yi][xi] == op:
-                    minmaxmov.yi = yi
-                    minmaxmov.xi = xi
-                    for yf in range(0, gamestate.N):
-                        for xf in range(0, gamestate.N):
-                            minmaxmov.yf = yf
-                            minmaxmov.xf = xf
-                            if movimento_valido(minmaxmov):
+                if gamestate.tabuleiro[yi][xi] == movimento.jog:
+                    for k in range(0, gamestate.N):
+                        for l in range(0, gamestate.N):
+                            movimento.yi = yi
+                            movimento.xi = xi
+                            movimento.yf = l
+                            movimento.xf = k
+                            if movimento_valido(movimento):
+                                # m = ("Jogador Minimizante: movimento_jog = ", movimento.jog)      # DEBUG
+                                # w = ("Profundidade" ,depth, "Jogador 1")                          # DEBUG
+                                # q = ("Movimentos validos: ",jogadas_validas_total(movimento.jog)) # DEBUG
+                                # f = open("logs.txt", "a")  #DEBUG
+                                # f.write(str(m))   # DEBUG
+                                # f.write("\n")     # DEBUG
+                                # f.write(str(w))   # DEBUG
+                                # f.write("\n")     # DEBUG
+                                # f.write(str(q))   # DEBUG
+                                # f.write("\n")     # DEBUG
+                                # f.write("\n")
                                 temp = copy.deepcopy(gamestate.tabuleiro)
-                                minmaxboard.append(temp)
-                                executa_movimento(minmaxmov)
+                                executa_movimento()
+                                # f.write(str(gamestate.tabuleiro[0]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[1]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[2]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[3]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[4]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[5]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[6]))
+                                # f.write("\n")
+                                # f.write("\n")
+                                # b = (gamestate.tabuleiro)
+                                # f.write(str(b))
+                                # f.close()         # DEBUG
                                 evaluation = algo_minmax(depth +1, False, alfa, beta)
+                                gamestate.tabuleiro = temp
+                                # undo_comer()
                                 value = min(value, evaluation)
                                 beta = min(beta, evaluation)
                                 if beta <= alfa:
                                     break
-                                gamestate.tabuleiro = minmaxboard[depth]
+        movimento.jog = troca_jog(movimento.jog)                           
         return value
-
-    value = -1000
-    for yi in range(gamestate.N):
-        for xi in range(gamestate.N):
-            if gamestate.tabuleiro[yi][xi] == movimento.jog:
-                for yf in range(0, gamestate.N):
-                    for xf in range(0, gamestate.N):
-                        minmaxmov.yi = yi
-                        minmaxmov.xi = xi
-                        minmaxmov.yf = yf
-                        minmaxmov.xf = xf
-                        if movimento_valido(minmaxmov):
-                            temp = copy.deepcopy(gamestate.tabuleiro)
-                            minmaxboard.append(temp)
-                            executa_movimento(minmaxmov)
-                            evaluation = algo_minmax(depth +1, False, alfa, beta)
-                            value = max(value, evaluation)
-                            alfa = max(alfa, evaluation)
-                            if beta <= alfa:
-                                break
-                            gamestate.tabuleiro = minmaxboard[depth]
-    return value
+    else:
+        movimento.jog = 2 
+        value = -1000
+        for yi in range(gamestate.N):
+            for xi in range(gamestate.N):
+                if gamestate.tabuleiro[yi][xi] == movimento.jog:
+                    for k in range(0, gamestate.N):
+                        for l in range(0, gamestate.N):
+                            movimento.yi = yi
+                            movimento.xi = xi
+                            movimento.yf = l
+                            movimento.xf = k
+                            if movimento_valido(movimento):
+                                # m = ("Jogador Maximizante: movimento_jog = ", movimento.jog)
+                                # w = ("Profundidade" ,depth, "Jogador 2")
+                                # q = ("Movimentos validos: ",jogadas_validas_total(movimento.jog)) # DEBUG
+                                # f = open("logs.txt", "a")  #DEBUG
+                                # f.write(str(m))   # DEBUG
+                                # f.write("\n")     # DEBUG
+                                # f.write(str(w))   # DEBUG
+                                # f.write("\n")     # DEBUG
+                                # f.write(str(q))   # DEBUG
+                                # f.write("\n")     # DEBUG
+                                # f.write("\n")
+                                # f.write("\n")
+                                temp = copy.deepcopy(gamestate.tabuleiro)
+                                executa_movimento()
+                                # f.write(str(gamestate.tabuleiro[0]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[1]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[2]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[3]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[4]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[5]))
+                                # f.write("\n")
+                                # f.write(str(gamestate.tabuleiro[6]))
+                                # f.write("\n")
+                                # f.write("\n")
+                                # b = (gamestate.tabuleiro)
+                                # f.write(str(b))
+                                # f.close()         # DEBUG
+                                evaluation = algo_minmax(depth +1, True, alfa, beta)
+                                gamestate.tabuleiro = temp
+                                # undo_comer()
+                                value = max(value, evaluation)
+                                alfa = max(alfa, evaluation)
+                                if beta <= alfa:
+                                    break
+        movimento.jog = troca_jog(movimento.jog)                  
+        return value
 
 
 
@@ -572,7 +693,7 @@ def main():
                                 # After a move is made, we increase the number of plays made, changing the player
 
                                 gamestate.nMovs += 1
-                                movimento.jog = troca_jog(movimento.jog)
+                                movimento.jog = 2
 
                                 # After each move, we update the screen with the updated board state
 
@@ -588,7 +709,7 @@ def main():
                             if movimento_valido(movimento):
                                 executa_movimento()
                                 gamestate.nMovs += 1
-                                movimento.jog = troca_jog(movimento.jog)
+                                movimento.jog = 1
                             mostra_tabul(screen)
             try:
                 pygame.display.flip()
@@ -601,14 +722,14 @@ def main():
             jogada_PC()
             gamestate.nMovs += 1
             mostra_tabul(screen)
-            movimento.jog = troca_jog(movimento.jog)
+            movimento.jog = 1
             time.sleep(1)
             pygame.display.flip()
         if gamestate.tipo == 3:
             jogada_PC()
             gamestate.nMovs += 1
             mostra_tabul(screen)
-            movimento.jog = troca_jog(movimento.jog)
+            movimento.jog = 2
             time.sleep(1)
             pygame.display.flip()
 
