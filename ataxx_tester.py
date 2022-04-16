@@ -4,6 +4,7 @@ import random
 
 SIZE = 600
 
+
 class gamestate:
     N = numpy.unsignedinteger
     sq = numpy.unsignedinteger
@@ -14,6 +15,7 @@ class gamestate:
     nMovs = 1
     vencedor = 0
 
+
 class movimento:
     xi = 0
     yi = 0
@@ -22,6 +24,7 @@ class movimento:
     jog = 0
     tipo = 0
 
+
 class totalmov:
     xi = 0
     yi = 0
@@ -29,11 +32,13 @@ class totalmov:
     xf = 0
     tipo = 0
 
+
 class bestmov:
     xi = 0
     yi = 0
     yf = 0
     xf = 0
+
 
 class minmaxmov():
     xi = 0
@@ -43,8 +48,10 @@ class minmaxmov():
     min = 0
     max = 0
 
+
 class save:
     game = []
+
 
 def escolhe_tabul():
     print("Tabuleiros:")
@@ -59,6 +66,7 @@ def escolhe_tabul():
     tabuleiro = "tabuleiros/tab"+numtabul+".txt"
     return tabuleiro
 
+
 def carrega_tabul(ficheiro):
     f = open(ficheiro)
     gamestate.N = int(f.readline())
@@ -69,20 +77,22 @@ def carrega_tabul(ficheiro):
     f.close()
     gamestate.tabuleiro = tabuleiro
 
+
 def dificuldade():
-        print("Algoritmo da AI 1:")
-        print("1) Random")
-        print("2) Greedy")
-        print("3) Center Control")
-        print("4) Minmax")
-        gamestate.ai1diff = int(input())
-        print("Algoritmo da AI 2:")
-        print("1) Random")
-        print("2) Greedy")
-        print("3) Center Control")
-        print("4) Minmax")
-        gamestate.ai2diff = int(input())
-        return
+    print("Algoritmo da AI 1:")
+    print("1) Random")
+    print("2) Greedy")
+    print("3) Center Control")
+    print("4) Minmax")
+    gamestate.ai1diff = int(input())
+    print("Algoritmo da AI 2:")
+    print("1) Random")
+    print("2) Greedy")
+    print("3) Center Control")
+    print("4) Minmax")
+    gamestate.ai2diff = int(input())
+    return
+
 
 def copia():
     save.game = copy.deepcopy(gamestate.tabuleiro)
@@ -91,11 +101,13 @@ def copia():
 def restaura():
     gamestate.tabuleiro = save.game
 
+
 def troca_jog(jog):
     if jog == 1:
         return 2
     else:
         return 1
+
 
 def comer():
     dx = -1
@@ -113,6 +125,7 @@ def comer():
                                             1][movimento.xf + dx] = movimento.jog
                 elif movimento.xf + dx == -1:
                     if gamestate.tabuleiro[movimento.yf + dy][0] == troca_jog(movimento.jog):
+                        # Trabalho Realizado por Pedro Sousa e Inês Cardoso
                         gamestate.tabuleiro[movimento.yf + dy][movimento.xf +
                                                                dx+1] = movimento.jog
 
@@ -123,19 +136,23 @@ def comer():
                 pass
         dy = -1
 
+
 def executa_movimento():
     gamestate.tabuleiro[movimento.yf][movimento.xf] = movimento.jog
     if movimento.tipo == 1:
         gamestate.tabuleiro[movimento.yi][movimento.xi] = 0
     comer()
 
+
 def adjacente(dist, classe):
     return(
         abs(classe.xi - classe.xf) == dist and abs(classe.yi - classe.yf) <= dist or
         abs(classe.yi - classe.yf) == dist and abs(classe.xi - classe.xf) <= dist)
 
+
 def dentro(x, y):
     return (x >= 0 and x <= gamestate.N-1 and y >= 0 and y <= gamestate.N-1)
+
 
 def movimento_valido(classe):
     if abs(classe.yf - classe.yi) == 2 and abs(classe.xf - classe.xi) == 1 or abs(classe.xf - classe.xi) == 2 and abs(classe.yf - classe.yi) == 1:
@@ -149,6 +166,7 @@ def movimento_valido(classe):
         classe.tipo = 1
         return True
 
+
 def tipo_jogo():
     print("Jogo de Ataxx")
     print("Escolha o modo de jogo:")
@@ -157,6 +175,7 @@ def tipo_jogo():
     print("3 - Computador vs. Computador ")
     tipo = input()
     return tipo
+
 
 def jogadas_validas_total(jog):
     nmovs = 0
@@ -174,6 +193,7 @@ def jogadas_validas_total(jog):
                             nmovs += 1
     return nmovs
 
+
 def conta_pecas(jog):
     pecas = 0
     for i in range(gamestate.N):
@@ -182,6 +202,7 @@ def conta_pecas(jog):
                 pecas += 1
     return pecas
 
+
 def quad_validos():
     nmovs = 0
     for i in range(gamestate.N):
@@ -189,6 +210,7 @@ def quad_validos():
             if gamestate.tabuleiro[i][j] == 0:
                 nmovs += 1
     return nmovs
+
 
 def fim_jogo():
     n = quad_validos()
@@ -212,6 +234,7 @@ def fim_jogo():
     else:
         return 0
 
+
 def finaliza():
     if gamestate.vencedor != 0:
         if gamestate.vencedor == -1:
@@ -221,6 +244,7 @@ def finaliza():
     else:
         resultados.empate += 1
     resultados.jogadas.append(gamestate.nMovs)
+
 
 def jogada_PC():
     bestav = -1000
@@ -254,6 +278,7 @@ def jogada_PC():
     if movimento_valido(movimento):
         executa_movimento()
 
+
 def avalia(tipo):
     tipo = int(tipo)
     score = 0
@@ -268,7 +293,7 @@ def avalia(tipo):
             movimento.jog = 1
             minmaxmov.min = 1
             minmaxmov.max = 2
-        else: 
+        else:
             movimento.jog = 2
             minmaxmov.min = 2
             minmaxmov.max = 1
@@ -277,7 +302,7 @@ def avalia(tipo):
         minmaxmov.yf = movimento.yf
         minmaxmov.xf = movimento.xf
         alfa = -100000
-        beta =  100000
+        beta = 100000
         score = algo_minmax(0, True, alfa, beta)
         movimento.yi = minmaxmov.yi
         movimento.xi = minmaxmov.xi
@@ -287,12 +312,15 @@ def avalia(tipo):
         score = random.random()
     return score
 
+
 def algo_random():
     return (random.randint(1, 10))
+
 
 def algo_greedy():
     salt = random.random()
     return (conta_pecas(movimento.jog) - conta_pecas(troca_jog(movimento.jog))+salt)
+
 
 def algo_centercontrol():
     salt = random.random()
@@ -301,10 +329,11 @@ def algo_centercontrol():
     score = 100 - (yc + xc) + 2*conta_pecas(movimento.jog) + salt
     return score
 
-def algo_minmax(depth, minimizer, alfa, beta):       
+
+def algo_minmax(depth, minimizer, alfa, beta):
     if depth == 3 or fim_jogo == -1:
         return (algo_greedy() * (-1))
-    
+
     if minimizer:
         movimento.jog = minmaxmov.min
         value = +1000
@@ -320,16 +349,17 @@ def algo_minmax(depth, minimizer, alfa, beta):
                             if movimento_valido(movimento):
                                 temp = copy.deepcopy(gamestate.tabuleiro)
                                 executa_movimento()
-                                evaluation = algo_minmax(depth +1, False, alfa, beta)
+                                evaluation = algo_minmax(
+                                    depth + 1, False, alfa, beta)
                                 gamestate.tabuleiro = temp
                                 value = min(value, evaluation)
                                 beta = min(beta, evaluation)
                                 if beta <= alfa:
                                     break
-        movimento.jog = minmaxmov.max                           
+        movimento.jog = minmaxmov.max
         return value
     else:
-        movimento.jog = minmaxmov.max 
+        movimento.jog = minmaxmov.max
         value = -1000
         for yi in range(gamestate.N):
             for xi in range(gamestate.N):
@@ -343,14 +373,16 @@ def algo_minmax(depth, minimizer, alfa, beta):
                             if movimento_valido(movimento):
                                 temp = copy.deepcopy(gamestate.tabuleiro)
                                 executa_movimento()
-                                evaluation = algo_minmax(depth +1, True, alfa, beta)
+                                evaluation = algo_minmax(
+                                    depth + 1, True, alfa, beta)
                                 gamestate.tabuleiro = temp
                                 value = max(value, evaluation)
                                 alfa = max(alfa, evaluation)
                                 if beta <= alfa:
                                     break
-        movimento.jog = minmaxmov.min                  
+        movimento.jog = minmaxmov.min
         return value
+
 
 def main():
     fim = 0
@@ -379,6 +411,7 @@ def main():
             finaliza()
             running = False
 
+
 class resultados:
     vermelho = 0
     azul = 0
@@ -387,8 +420,10 @@ class resultados:
     diff = []
     media = 0
 
+
 def calculos():
     resultados.media = numpy.median(resultados.diff)
+
 
 tabuleiro = escolhe_tabul()
 carrega_tabul(tabuleiro)
@@ -402,7 +437,12 @@ for i in range(total):
 
 calculos()
 
+print("\n")
 print("Vitórias do Vermelho: ",     resultados.vermelho)
 print("Vitórias do Azul: ",         resultados.azul)
 print("Empates: ",                  resultados.empate)
 print("Diferença de peças média: ", resultados.media)
+print("\n")
+print("Trabalho realizado por:")
+print("Pedro Sousa")
+print("Inês Cardoso")
