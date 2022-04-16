@@ -7,7 +7,7 @@ Development notes can be read on the Jupyter Notebook in the files.
 
   - Execute ataxx.py
   - Choose game mode
-  - Choose difficulty / Ai's
+  - Choose difficulty / AI's
   - Play the game
   - After the game is over, it will print in the terminal the results
   - Have fun !
