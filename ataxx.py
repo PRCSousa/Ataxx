@@ -94,9 +94,9 @@ def dificuldade():
         return
     elif gamestate.tipo == 2:
         print("Dificuldade:")
-        print("1) Fácil (Random)")
-        print("2) Médio (Greedy)")
-        print("3) Difícil (Center)")
+        print("1) Fácil")
+        print("2) Médio")
+        print("3) Difícil")
         gamestate.ai2diff = input()
         return
     else:
