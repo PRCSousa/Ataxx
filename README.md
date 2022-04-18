@@ -9,5 +9,5 @@ Development notes can be read on the Jupyter Notebook in the files.
   - Choose game mode
   - Choose difficulty / AI's
   - Play the game
-  - After the game is over, it will print in the terminal the results
+  - After the game is over, it will print the results in the terminal
   - Have fun !
