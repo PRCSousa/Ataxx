@@ -469,7 +469,7 @@ def algo_centercontrol():
 # it plays the one with the most favorable outcome for the computer
 
 def algo_minmax(depth, minimizer, alfa, beta):
-    if depth == 3 or fim_jogo == -1:
+    if depth == 3 or fim_jogo() == -1:
         return (algo_greedy() * (-1))
 
     if minimizer:
