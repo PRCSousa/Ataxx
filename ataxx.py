@@ -36,7 +36,6 @@ class gamestate:
     tipo = unsignedinteger
     ai1diff = unsignedinteger
     ai2diff = unsignedinteger
-    rec = 0
     nMovs = 1
     vencedor = 0
 
